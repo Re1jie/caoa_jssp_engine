@@ -52,10 +52,11 @@ class ActiveScheduleDecoder:
 
         self._job_target = {}
         if df_job_target is not None:
-            self._job_target = {
-                (int(row['job_id']), int(row['voyage'])): float(row['T_j'])
-                for _, row in df_job_target.iterrows()
-            }
+            for _, row in df_job_target.iterrows():
+                self._job_target[(int(row['job_id']), int(row['voyage']))] = {
+                    'target_time': float(row['T_j']),
+                    'weight': float(row['w_j']) if 'w_j' in row.index and pd.notna(row['w_j']) else 1.0,
+                }
 
         self.L_ref = [
             (int(r.job_id), int(r.voyage), int(r.op_seq))
@@ -217,7 +218,7 @@ class ActiveScheduleDecoder:
 
     def fitness(self, X: np.ndarray) -> float:
         _, metrics = self.decode_from_continuous(X)
-        return metrics['total_tardiness']
+        return metrics['weighted_avg_tardiness']
 
 
     def _compute_metrics(self, schedule_df: pd.DataFrame) -> dict:

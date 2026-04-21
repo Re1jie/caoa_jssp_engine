@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 
-def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.8, beta=0.5, gamma=0.1, delta=1, initial_energy=100.0, max_FEs=None, initial_pos=None):
+def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.3, beta=0.1, gamma=0.1, delta=1e-3, initial_energy=10.0, max_FEs=None, initial_pos=None):
     # 1. Inisialisasi Populasi dan Energi (Persamaan 2 & 3)
     lb = np.full(dim, lb) if np.isscalar(lb) else np.array(lb, dtype=float)
     ub = np.full(dim, ub) if np.isscalar(ub) else np.array(ub, dtype=float)

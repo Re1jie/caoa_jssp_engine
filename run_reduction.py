@@ -7,17 +7,7 @@ from engine.tidal_checker import TidalChecker
 
 def objective_function(X, decoder):
     _, metrics = decoder.decode_from_continuous(X)
-    
-    # Penalti Tinggi: Keterlambatan adalah pelanggaran paling krusial
-    penalty_tardiness = 1000.0 * metrics['total_tardiness']
-    
-    # Penalti Menengah: Kongesti memboroskan sumber daya kapal, hindari sebisa mungkin
-    penalty_congestion = 500.0 * metrics['total_congestion']
-    
-    # Penalti Rendah: Pasang surut boleh ditunggu asal tidak menyebabkan telat
-    penalty_tidal = 1.0 * metrics['total_tidal_delay']
-    
-    return penalty_tardiness + penalty_congestion + penalty_tidal
+    return metrics['weighted_avg_tardiness']
 
 def main():
     np.random.seed(42)
@@ -56,6 +46,7 @@ def main():
     print("-" * 60)
     
     metrics_list = [
+        ('Objective (Avg Tardiness)', 'weighted_avg_tardiness'),
         ('Makespan (Jam)', 'makespan'),
         ('Total Kongesti (Jam)', 'total_congestion'),
         ('Total Delay Pasang (Jam)', 'total_tidal_delay'),
@@ -66,10 +57,6 @@ def main():
 
     for label, key in metrics_list:
         print(f"{label:<25} | {fcfs_metrics.get(key, 0):<15.2f} | {caoa_metrics.get(key, 0):<15.2f}")
-
-    dim_fcfs = fcfs_metrics.get('conflict_resolved_count', 0)
-    dim_caoa = caoa_metrics.get('conflict_resolved_count', 0)
-    print(f"{'Resolusi Konflik':<25} | {dim_fcfs:<15} | {dim_caoa:<15}")
 
 if __name__ == "__main__":
     main()

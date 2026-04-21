@@ -2,4 +2,3 @@
 .codex
 __pycache__
 backtesting/
-data/processed/

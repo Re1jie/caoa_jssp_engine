@@ -24,13 +24,27 @@ def slice_data_by_region_and_time(
     remap_dict = {old: new for new, old in enumerate(original_jobs)}
     
     sliced_df['job_id'] = sliced_df['job_id'].map(remap_dict)
-    sliced_df = sliced_df.sort_values(by=['job_id', 'A_lj']).reset_index(drop=True)
-    sliced_df['op_seq'] = sliced_df.groupby('job_id').cumcount()
+    sliced_df = sliced_df.sort_values(by=['job_id', 'voyage', 'A_lj']).reset_index(drop=True)
+    sliced_df['op_seq'] = sliced_df.groupby(['job_id', 'voyage']).cumcount()
     sliced_df = sliced_df.drop(columns=['wilayah_kapal'])
 
-    sliced_target = df_target[df_target['job_id'].isin(original_jobs)].copy()
-    sliced_target['job_id'] = sliced_target['job_id'].map(remap_dict)
-    sliced_target = sliced_target.sort_values(by=['job_id']).reset_index(drop=True)
+    selected_pairs = (
+        sliced_df[['job_id', 'voyage']]
+        .drop_duplicates()
+        .rename(columns={'job_id': 'mapped_job_id'})
+    )
+    reverse_remap = {new: old for old, new in remap_dict.items()}
+    selected_pairs['original_job_id'] = selected_pairs['mapped_job_id'].map(reverse_remap)
+
+    sliced_target = df_target.merge(
+        selected_pairs,
+        left_on=['job_id', 'voyage'],
+        right_on=['original_job_id', 'voyage'],
+        how='inner'
+    ).copy()
+    sliced_target['job_id'] = sliced_target['mapped_job_id']
+    sliced_target = sliced_target.drop(columns=['mapped_job_id', 'original_job_id'])
+    sliced_target = sliced_target.sort_values(by=['job_id', 'voyage']).reset_index(drop=True)
 
     sliced_df.to_csv(out_data_path, index=False)
     sliced_target.to_csv(out_target_path, index=False)

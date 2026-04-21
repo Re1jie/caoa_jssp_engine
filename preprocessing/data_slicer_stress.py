@@ -33,8 +33,12 @@ def slice_stress_test_region_time(
     new_targets = []
     
     print("Menyuntikkan kompresi waktu (Big Bang) dan menghitung target dinamis...")
-    for j in sliced_df['job_id'].unique():
-        job_mask = sliced_df['job_id'] == j
+    for job_id, voyage in (
+        sliced_df[['job_id', 'voyage']]
+        .drop_duplicates()
+        .itertuples(index=False, name=None)
+    ):
+        job_mask = (sliced_df['job_id'] == job_id) & (sliced_df['voyage'] == voyage)
         
         # [A] Kompresi Waktu Kedatangan
         # Ekstrak waktu mulai asli kapal ini
@@ -55,15 +59,16 @@ def slice_stress_test_region_time(
         realistic_T_j = (total_p + total_sail) * 1.0 
         
         new_targets.append({
-            'job_id': j,
+            'job_id': job_id,
+            'voyage': voyage,
             'route': 'stress_test',
             'T_j': realistic_T_j
         })
 
     # 5. Penataan Ulang Struktur Data
     # Urutkan ulang berdasarkan job_id dan kedatangan baru yang sudah terkompresi
-    sliced_df = sliced_df.sort_values(by=['job_id', 'A_lj']).reset_index(drop=True)
-    sliced_df['op_seq'] = sliced_df.groupby('job_id').cumcount()
+    sliced_df = sliced_df.sort_values(by=['job_id', 'voyage', 'A_lj']).reset_index(drop=True)
+    sliced_df['op_seq'] = sliced_df.groupby(['job_id', 'voyage']).cumcount()
 
     # 6. Pembuatan DataFrame Target Baru
     sliced_target = pd.DataFrame(new_targets)
