@@ -1,0 +1,20 @@
+{
+    "voyage_count": 242,
+    "late_voyage_count": 86,
+    "on_time_voyage_count": 156,
+    "structurally_feasible_voyage_count": 122,
+    "structurally_infeasible_voyage_count": 120,
+    "total_due_window_hours": 90432.0,
+    "total_actual_flow_time_hours": 96626.0,
+    "total_actual_operation_hours": 25797.0,
+    "total_planned_sailing_hours": 73544.0,
+    "total_wait_hours": 3151.0,
+    "total_tardiness_hours": 13485.0,
+    "total_unavoidable_tardiness_hours": 13500.0,
+    "total_avoidable_tardiness_hours": 1620.0,
+    "total_operational_excess_hours": 1705.0,
+    "max_tardiness_hours": 1345.0,
+    "avg_tardiness_hours": 55.72314049586777,
+    "avg_avoidable_tardiness_hours": 6.694214876033058,
+    "avg_unavoidable_tardiness_hours": 55.78512396694215
+}
