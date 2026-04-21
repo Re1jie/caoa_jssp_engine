@@ -2,8 +2,29 @@ import pandas as pd
 import numpy as np
 import heapq
 import itertools
-from engine.metrics import compute_schedule_metrics
+from engine.metrics import build_infeasible_metrics, compute_schedule_metrics
 from engine.tidal_checker import TidalChecker
+
+
+def _build_schedule_df(results: list[dict]) -> pd.DataFrame:
+    columns = [
+        'job_id',
+        'voyage',
+        'machine_id',
+        'op_seq',
+        'A_lj',
+        'S_lj',
+        'C_lj',
+        'p_lj',
+        'TSail_lj',
+        'tidal_wait',
+        'congestion_wait',
+    ]
+    if not results:
+        return pd.DataFrame(columns=columns)
+    return pd.DataFrame(results, columns=columns).sort_values(
+        ['job_id', 'voyage', 'op_seq']
+    ).reset_index(drop=True)
 
 def run_fcfs_baseline(
     df_ops: pd.DataFrame, 
@@ -47,6 +68,7 @@ def run_fcfs_baseline(
         m = op['machine_id']
         p_lj = op['p_lj']
         tsail = op['TSail_lj']
+        ship_name = op.get('ship_name')
 
         if ev_type == 0:  # Kedatangan kapal
             if machine_active_berths.get(m, 0) < machine_capacity.get(m, 1):
@@ -56,14 +78,23 @@ def run_fcfs_baseline(
                 earliest_start = t 
                 
                 # Cek pasang surut
-                if tidal_checker is not None and tidal_checker.has_tidal_constraint(m):
-                    feasible_start = tidal_checker.find_next_start(m, earliest_start, p_lj)
+                if tidal_checker is not None and tidal_checker.has_tidal_constraint(m, ship_name):
+                    feasible_start = tidal_checker.find_next_start(
+                        m,
+                        earliest_start,
+                        p_lj,
+                        ship_name=ship_name,
+                    )
                     if feasible_start == float("inf"):
-                        s_lj = earliest_start
-                        tidal_wait = 0.0
-                    else:
-                        s_lj = feasible_start
-                        tidal_wait = s_lj - earliest_start
+                        schedule_df = _build_schedule_df(results)
+                        return schedule_df, build_infeasible_metrics(
+                            reason=(
+                                "tidal_window_not_found:"
+                                f"machine_id={m},job_id={job_id},voyage={voyage},op_seq={op_seq}"
+                            )
+                        )
+                    s_lj = feasible_start
+                    tidal_wait = s_lj - earliest_start
                 else:
                     s_lj = earliest_start
                     tidal_wait = 0.0
@@ -91,19 +122,29 @@ def run_fcfs_baseline(
                 arr_t, next_job_key, next_job_op_seq = machine_queues[m].pop(0)
                 next_job_id, next_voyage = next_job_key
                 next_p = job_ops[next_job_key][next_job_op_seq]['p_lj']
+                next_ship_name = job_ops[next_job_key][next_job_op_seq].get('ship_name')
                 
                 # Definisi waktu awal antrean
                 earliest_start = max(t, arr_t)
                 
                 # Cek pasang surut
-                if tidal_checker is not None and tidal_checker.has_tidal_constraint(m):
-                    feasible_start = tidal_checker.find_next_start(m, earliest_start, next_p)
+                if tidal_checker is not None and tidal_checker.has_tidal_constraint(m, next_ship_name):
+                    feasible_start = tidal_checker.find_next_start(
+                        m,
+                        earliest_start,
+                        next_p,
+                        ship_name=next_ship_name,
+                    )
                     if feasible_start == float("inf"):
-                        s_lj = earliest_start
-                        tidal_wait = 0.0
-                    else:
-                        s_lj = feasible_start
-                        tidal_wait = s_lj - earliest_start
+                        schedule_df = _build_schedule_df(results)
+                        return schedule_df, build_infeasible_metrics(
+                            reason=(
+                                "tidal_window_not_found:"
+                                f"machine_id={m},job_id={next_job_id},voyage={next_voyage},op_seq={next_job_op_seq}"
+                            )
+                        )
+                    s_lj = feasible_start
+                    tidal_wait = s_lj - earliest_start
                 else:
                     s_lj = earliest_start
                     tidal_wait = 0.0
@@ -124,37 +165,17 @@ def run_fcfs_baseline(
             else:
                 machine_active_berths[m] -= 1
 
-    schedule_df = pd.DataFrame(results).sort_values(['job_id', 'voyage', 'op_seq']).reset_index(drop=True)
+    schedule_df = _build_schedule_df(results)
     metrics = _compute_fcfs_metrics(schedule_df, df_job_target)
     
     return schedule_df, metrics
 
 def _compute_fcfs_metrics(schedule_df: pd.DataFrame, df_job_target: pd.DataFrame) -> dict:
-    min_required_by_job = (
-        schedule_df.sort_values(['job_id', 'voyage', 'op_seq'])
-        .groupby(['job_id', 'voyage'], as_index=False)
-        .apply(
-            lambda group: pd.Series({
-                'total_processing_time': float(group['p_lj'].sum()),
-                'total_sailing_time': float(group['TSail_lj'].iloc[:-1].sum()),
-            }),
-            include_groups=False,
-        )
-    )
-    min_required_lookup = {
-        (int(row['job_id']), int(row['voyage'])): (
-            float(row['total_processing_time']) + float(row['total_sailing_time'])
-        )
-        for _, row in min_required_by_job.iterrows()
-    }
-
     target_dict = {}
     for _, row in df_job_target.iterrows():
         key = (int(row['job_id']), int(row['voyage']))
         target_dict[key] = {
             'target_time': float(row['T_j']),
-            'weight': float(row['w_j']) if 'w_j' in row.index and pd.notna(row['w_j']) else 1.0,
-            'min_required_time': min_required_lookup.get(key, 0.0),
         }
 
     return compute_schedule_metrics(schedule_df, target_dict)

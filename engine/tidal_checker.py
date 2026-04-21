@@ -77,8 +77,14 @@ class TidalChecker:
     def tidal_machine_ids(self) -> set[int]:
         return self._tidal_machine_ids
 
-    def has_tidal_constraint(self, machine_id: int) -> bool:
-        return int(machine_id) in self._tidal_machine_ids
+    def has_tidal_constraint(self, machine_id: int, ship_name: str | None = None) -> bool:
+        mid = int(machine_id)
+        if mid not in self._tidal_machine_ids:
+            return False
+        if ship_name is None:
+            return True
+        allowed_ships = self._constraints[mid]["ships"]
+        return ship_name in allowed_ships
 
     def get_constraint(self, machine_id: int) -> dict | None:
         return self._constraints.get(int(machine_id))
@@ -88,9 +94,10 @@ class TidalChecker:
         machine_id: int,
         start_h: float,
         duration_h: float,
+        ship_name: str | None = None,
     ) -> bool:
         mid = int(machine_id)
-        if mid not in self._tidal_machine_ids:
+        if not self.has_tidal_constraint(mid, ship_name):
             return True
 
         end_h = start_h + duration_h
@@ -117,9 +124,10 @@ class TidalChecker:
         machine_id: int,
         earliest_h: float,
         duration_h: float,
+        ship_name: str | None = None,
     ) -> float:
         mid = int(machine_id)
-        if mid not in self._tidal_machine_ids:
+        if not self.has_tidal_constraint(mid, ship_name):
             return earliest_h
 
         arr_starts = self._arr_starts.get(mid, np.array([]))
@@ -179,10 +187,11 @@ class TidalChecker:
         machine_id: int,
         earliest_h: float,
         duration_h: float,
+        ship_name: str | None = None,
     ) -> float:
-        if not self.has_tidal_constraint(machine_id):
+        if not self.has_tidal_constraint(machine_id, ship_name):
             return 0.0
-        best_start = self.find_next_start(machine_id, earliest_h, duration_h)
+        best_start = self.find_next_start(machine_id, earliest_h, duration_h, ship_name=ship_name)
         if best_start == float("inf"):
             return float("inf")
         return max(0.0, best_start - earliest_h)

@@ -103,7 +103,21 @@ df['wilayah_kapal'] = df['job_id'].map(dominant_region)
 
 komputasi_df = df[['job_id', 'machine_id', 'op_seq', 'rute', 'layer_id', 'A_lj', 'p_lj', 'TSail_lj', 'wilayah_kapal']]
 df['voyage'] = df['VOYAGE'].astype(str).str.split('.').str[0].astype(int)
-komputasi_df = df[['job_id', 'voyage', 'machine_id', 'op_seq', 'rute', 'layer_id', 'A_lj', 'p_lj', 'TSail_lj', 'wilayah_kapal']]
+komputasi_df = df[
+    [
+        'job_id',
+        'voyage',
+        'machine_id',
+        'op_seq',
+        'rute',
+        'layer_id',
+        'A_lj',
+        'p_lj',
+        'TSail_lj',
+        'wilayah_kapal',
+        'NAMA_KAPAL',
+    ]
+].rename(columns={'NAMA_KAPAL': 'ship_name'})
 komputasi_df.to_csv("data/processed/jssp_data.csv", index=False)
 
 dual_berth = {"TANJUNG PRIOK": 1, "MAKASSAR": 1, "BAUBAU": 1, "AMBON": 1, "SORONG": 1, "KUPANG": 1, "SURABAYA": 1}
@@ -131,5 +145,7 @@ SK_Trayek = {
 job_route_df = df[['job_id', 'voyage', 'NAMA_KAPAL', 'rute']].drop_duplicates().reset_index(drop=True)
 job_route_df['T_j'] = job_route_df.apply(lambda row: SK_Trayek.get(row['NAMA_KAPAL'], {}).get(row['rute'], np.nan), axis=1)
 
-final_job_df = job_route_df[['job_id', 'voyage', 'T_j']]
+final_job_df = job_route_df[['job_id', 'voyage', 'NAMA_KAPAL', 'T_j']].rename(
+    columns={'NAMA_KAPAL': 'ship_name'}
+)
 final_job_df.to_csv("data/processed/job_target_time.csv", index=False)

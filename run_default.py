@@ -2,41 +2,24 @@ import json
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
-from utils.data_loader import load_real_jssp_data
-from engine.fcfs import run_fcfs_baseline
-from engine.decoder import ActiveScheduleDecoder
+
 from engine.caoa import CAOA
+from engine.decoder import ActiveScheduleDecoder
+from engine.fcfs import run_fcfs_baseline
 from engine.tidal_checker import TidalChecker
+from utils.data_loader import load_real_jssp_data
 
 def objective_function(X, decoder):
     _, metrics = decoder.decode_from_continuous(X)
-    return metrics['weighted_avg_tardiness']
+    return metrics['total_tardiness']
 
 
-def build_voyage_debug_report(schedule_df, df_ops, df_job_target):
-    op_summary = (
-        df_ops.sort_values(['job_id', 'voyage', 'op_seq'])
-        .groupby(['job_id', 'voyage'], as_index=False)
-        .apply(
-            lambda group: pd.Series({
-                'planned_operation_hours': float(group['p_lj'].sum()),
-                'planned_sailing_hours': float(group['TSail_lj'].iloc[:-1].sum()),
-                'operation_count': int(group['op_seq'].count()),
-            }),
-            include_groups=False,
-        )
-    )
-
+def build_voyage_debug_report(schedule_df, df_job_target):
     actual_summary = (
         schedule_df.groupby(['job_id', 'voyage'], as_index=False)
         .agg(
             first_arrival_hour=('A_lj', 'min'),
-            first_start_hour=('S_lj', 'min'),
             last_completion_hour=('C_lj', 'max'),
-            actual_operation_hours=('p_lj', 'sum'),
-            total_tidal_wait_hours=('tidal_wait', 'sum'),
-            total_congestion_wait_hours=('congestion_wait', 'sum'),
         )
     )
 
@@ -44,7 +27,6 @@ def build_voyage_debug_report(schedule_df, df_ops, df_job_target):
 
     debug_df = (
         actual_summary
-        .merge(op_summary, on=['job_id', 'voyage'], how='left')
         .merge(
             target_summary[['job_id', 'voyage', 'due_window_hours']],
             on=['job_id', 'voyage'],
@@ -52,61 +34,20 @@ def build_voyage_debug_report(schedule_df, df_ops, df_job_target):
         )
     )
 
-    debug_df['planned_sailing_hours'] = debug_df['planned_sailing_hours'].fillna(0.0)
-    debug_df['actual_flow_time_hours'] = (
-        debug_df['last_completion_hour'] - debug_df['first_arrival_hour']
-    )
-    debug_df['waiting_before_first_service_hours'] = (
-        debug_df['first_start_hour'] - debug_df['first_arrival_hour']
-    ).clip(lower=0.0)
-    debug_df['total_wait_hours'] = (
-        debug_df['total_tidal_wait_hours'] + debug_df['total_congestion_wait_hours']
-    )
     debug_df['due_hour_absolute'] = (
         debug_df['first_arrival_hour'] + debug_df['due_window_hours']
     )
-    debug_df['min_required_hours'] = (
-        debug_df['planned_operation_hours'] + debug_df['planned_sailing_hours']
-    )
-    debug_df['slack_hours'] = (
-        debug_df['due_window_hours'] - debug_df['min_required_hours']
-    )
+    debug_df['tardiness_hours'] = (
+        debug_df['last_completion_hour'] - debug_df['due_hour_absolute']
+    ).clip(lower=0.0)
     debug_df['lateness_hours'] = (
         debug_df['last_completion_hour'] - debug_df['due_hour_absolute']
     )
-    debug_df['raw_tardiness_hours'] = debug_df['lateness_hours'].clip(lower=0.0)
-    debug_df['unavoidable_tardiness_hours'] = (-debug_df['slack_hours']).clip(lower=0.0)
-    debug_df['tardiness_hours'] = (
-        debug_df['raw_tardiness_hours'] - debug_df['unavoidable_tardiness_hours']
-    ).clip(lower=0.0)
     debug_df['earliness_hours'] = (-debug_df['lateness_hours']).clip(lower=0.0)
-    debug_df['slack_to_due_hours'] = (
-        debug_df['due_hour_absolute'] - debug_df['last_completion_hour']
-    )
-    debug_df['operating_vs_due_ratio'] = (
-        debug_df['actual_flow_time_hours'] / debug_df['due_window_hours']
-    )
-    debug_df['processing_vs_due_ratio'] = (
-        debug_df['actual_operation_hours'] / debug_df['due_window_hours']
-    )
-    debug_df['waiting_vs_flow_ratio'] = np.where(
-        debug_df['actual_flow_time_hours'] > 0,
-        debug_df['total_wait_hours'] / debug_df['actual_flow_time_hours'],
-        0.0,
-    )
-    debug_df['planned_total_work_hours'] = debug_df['min_required_hours']
-    debug_df['actual_nonprocessing_hours'] = (
-        debug_df['actual_flow_time_hours'] - debug_df['actual_operation_hours']
-    )
     debug_df['debug_status'] = np.where(
         debug_df['tardiness_hours'] > 0,
         'LATE',
         'ON_TIME',
-    )
-    debug_df['target_feasibility'] = np.where(
-        debug_df['slack_hours'] >= 0,
-        'FEASIBLE_TARGET',
-        'INFEASIBLE_TARGET',
     )
 
     return debug_df.sort_values(
@@ -146,22 +87,26 @@ def save_voyage_debug_report(debug_df, output_dir="data/result"):
         "voyage_count": int(len(debug_df)),
         "late_voyage_count": int((debug_df['tardiness_hours'] > 0).sum()),
         "on_time_voyage_count": int((debug_df['tardiness_hours'] <= 0).sum()),
-        "infeasible_target_count": int((debug_df['slack_hours'] < 0).sum()),
         "total_due_window_hours": float(debug_df['due_window_hours'].sum()),
-        "total_min_required_hours": float(debug_df['min_required_hours'].sum()),
-        "total_actual_flow_time_hours": float(debug_df['actual_flow_time_hours'].sum()),
-        "total_actual_operation_hours": float(debug_df['actual_operation_hours'].sum()),
-        "total_planned_sailing_hours": float(debug_df['planned_sailing_hours'].sum()),
-        "total_wait_hours": float(debug_df['total_wait_hours'].sum()),
         "total_tardiness_hours": float(debug_df['tardiness_hours'].sum()),
-        "total_raw_tardiness_hours": float(debug_df['raw_tardiness_hours'].sum()),
-        "total_unavoidable_tardiness_hours": float(debug_df['unavoidable_tardiness_hours'].sum()),
         "max_tardiness_hours": float(debug_df['tardiness_hours'].max()),
         "avg_tardiness_hours": float(debug_df['tardiness_hours'].mean()),
+        "max_earliness_hours": float(debug_df['earliness_hours'].max()),
     }
     summary_path.write_text(json.dumps(summary, indent=4), encoding="utf-8")
 
     return debug_path, summary_path
+
+
+def ensure_feasible(metrics, label: str) -> None:
+    if metrics.get('is_feasible', True):
+        return
+    reason = metrics.get('infeasible_reason', 'unknown')
+    penalty = metrics.get('penalty_tardiness', metrics.get('total_tardiness', 0.0))
+    raise RuntimeError(
+        f"{label} menghasilkan schedule infeasible. "
+        f"reason={reason} | penalty_tardiness={penalty}"
+    )
 
 def main():
     np.random.seed(42)
@@ -173,6 +118,7 @@ def main():
 
     # Baseline FCFS
     _, fcfs_metrics = run_fcfs_baseline(df_ops, df_machine_master, df_job_target, tidal_checker)
+    ensure_feasible(fcfs_metrics, "FCFS baseline")
 
     # Optimization CAOA
     decoder = ActiveScheduleDecoder(
@@ -183,18 +129,19 @@ def main():
     )
 
     caoa_params = {
-        'N': 20, 'max_iter': 200, 'lb': 0.0, 'ub': 1.0, 'dim': dim,
+        'N': 20, 'max_iter': 100, 'lb': 0.0, 'ub': 1.0, 'dim': dim,
         'alpha': 0.9, 'beta': 0.1,
         'gamma': 0.07, 'delta': 1.2,
         'initial_energy': 150
     }
 
-    best_score, best_position, cg_curve, avg_curve = CAOA(
+    _, best_position, _, _ = CAOA(
         **caoa_params,
         fobj=lambda X: objective_function(X, decoder)
     )
 
     caoa_schedule_df, caoa_metrics = decoder.decode_from_continuous(best_position)
+    ensure_feasible(caoa_metrics, "CAOA")
     timetable_path, metrics_path, position_path = save_optimized_results(
         caoa_schedule_df,
         caoa_metrics,
@@ -202,7 +149,6 @@ def main():
     )
     voyage_debug_df = build_voyage_debug_report(
         caoa_schedule_df,
-        df_ops,
         df_job_target,
     )
     voyage_debug_path, voyage_summary_path = save_voyage_debug_report(voyage_debug_df)
@@ -212,16 +158,9 @@ def main():
     print("-" * 60)
     
     metrics_list = [
-        ('Objective (Adj Avg Tard.)', 'weighted_avg_tardiness'),
-        ('Makespan (Jam)', 'makespan'),
-        ('Total Kongesti (Jam)', 'total_congestion'),
-        ('Total Delay Pasang (Jam)', 'total_tidal_delay'),
-        ('Total Tardiness Adj (Jam)', 'total_tardiness'),
-        ('Rata-rata Tardiness Adj', 'avg_tardiness'),
-        ('Maksimal Tardiness Adj', 'max_tardiness'),
-        ('Total Tardiness Raw', 'raw_total_tardiness'),
-        ('Rata-rata Tardiness Raw', 'raw_avg_tardiness'),
-        ('Total Unavoidable Tard.', 'total_unavoidable_tardiness'),
+        ('Objective (Total Tard.)', 'total_tardiness'),
+        ('Max Tardiness', 'max_tardiness'),
+        ('Late Voyages', 'late_voyage_count'),
     ]
 
     for label, key in metrics_list:

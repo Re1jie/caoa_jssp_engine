@@ -1,8 +1,10 @@
-import numpy as np
-import pandas as pd
 import heapq
 import itertools
-from engine.metrics import compute_schedule_metrics
+
+import numpy as np
+import pandas as pd
+
+from engine.metrics import build_infeasible_metrics, compute_schedule_metrics
 from engine.tidal_checker import TidalChecker
 
 
@@ -36,7 +38,8 @@ class ActiveScheduleDecoder:
                 'A_lj': float(row['A_lj']),
                 'p_lj': float(row['p_lj']),
                 'TSail_lj': float(row['TSail_lj']) if pd.notna(row['TSail_lj']) else 0.0,
-                'voyage': int(row['voyage'])
+                'voyage': int(row['voyage']),
+                'ship_name': row['ship_name'] if 'ship_name' in row.index else None,
             }
 
         for j, v in self.jobs:
@@ -51,30 +54,11 @@ class ActiveScheduleDecoder:
         self._tidal = tidal_checker
 
         self._job_target = {}
-        min_required_by_job = (
-            df_ops.sort_values(['job_id', 'voyage', 'op_seq'])
-            .groupby(['job_id', 'voyage'], as_index=False)
-            .apply(
-                lambda group: pd.Series({
-                    'total_processing_time': float(group['p_lj'].sum()),
-                    'total_sailing_time': float(group['TSail_lj'].iloc[:-1].sum()),
-                }),
-                include_groups=False,
-            )
-        )
-        min_required_lookup = {
-            (int(row['job_id']), int(row['voyage'])): (
-                float(row['total_processing_time']) + float(row['total_sailing_time'])
-            )
-            for _, row in min_required_by_job.iterrows()
-        }
         if df_job_target is not None:
             for _, row in df_job_target.iterrows():
                 key = (int(row['job_id']), int(row['voyage']))
                 self._job_target[key] = {
                     'target_time': float(row['T_j']),
-                    'weight': float(row['w_j']) if 'w_j' in row.index and pd.notna(row['w_j']) else 1.0,
-                    'min_required_time': min_required_lookup.get(key, 0.0),
                 }
 
         self.L_ref = [
@@ -106,25 +90,25 @@ class ActiveScheduleDecoder:
         for j, v in self.jobs:
             first_o = self._first_op[(j, v)]
             op = self._op_data[(j, v, first_o)]
-            m = op['machine_id']
-            # Put in pool immediately to expose to lookahead
-            machine_waiting_pool[m].append({
-                'job_id': j,
-                'voyage': v,
-                'op_seq': first_o,
-                'A_lj': op['A_lj']
-            })
-            heapq.heappush(events, (op['A_lj'], 0, next(counter), j, v, first_o))
+            heapq.heappush(
+                events,
+                (op['A_lj'], 0, next(counter), j, v, first_o, op['A_lj'])
+            )
 
         results = []
-        conflict_resolved_count = 0
-
         while events:
-            t, ev_type, _, job_id, voyage, op_seq = heapq.heappop(events)
+            t, ev_type, _, job_id, voyage, op_seq, arrival_h = heapq.heappop(events)
 
             # arrival event
             if ev_type == 0:
-                pass
+                op = self._op_data[(job_id, voyage, op_seq)]
+                m = op['machine_id']
+                machine_waiting_pool[m].append({
+                    'job_id': job_id,
+                    'voyage': voyage,
+                    'op_seq': op_seq,
+                    'A_lj': float(arrival_h),
+                })
 
             # completion event
             else:
@@ -134,19 +118,9 @@ class ActiveScheduleDecoder:
                 
                 if op_seq + 1 < self._job_n_ops[(job_id, voyage)]:
                     next_A = t + op['TSail_lj']
-                    next_op = self._op_data[(job_id, voyage, op_seq + 1)]
-                    next_m = next_op['machine_id']
-                    
-                    # Put in pool immediately to expose to lookahead
-                    machine_waiting_pool[next_m].append({
-                        'job_id': job_id,
-                        'voyage': voyage,
-                        'op_seq': op_seq + 1,
-                        'A_lj': next_A
-                    })
                     heapq.heappush(
                         events,
-                        (next_A, 0, next(counter), job_id, voyage, op_seq + 1)
+                        (next_A, 0, next(counter), job_id, voyage, op_seq + 1, next_A)
                     )
 
             # GLOBAL ACTIVE DISPATCH
@@ -184,23 +158,37 @@ class ActiveScheduleDecoder:
                         machine_waiting_pool[m_id].pop(i)
                         break
 
-                conflict_resolved_count += 1
-
                 w_job = winner['job_id']
                 w_v = winner['voyage']
                 w_op = winner['op_seq']
                 w_arrival = winner['A_lj']
 
-                w_p = self._op_data[(w_job, w_v, w_op)]['p_lj']
+                op_data = self._op_data[(w_job, w_v, w_op)]
+                w_p = op_data['p_lj']
+                ship_name = op_data['ship_name']
 
                 s = max(t, w_arrival)
                 tidal_wait = 0.0
 
-                if self._tidal and self._tidal.has_tidal_constraint(m_id):
-                    feasible = self._tidal.find_next_start(m_id, s, w_p)
-                    if feasible != float("inf"):
-                        tidal_wait = feasible - s
-                        s = feasible
+                if self._tidal and self._tidal.has_tidal_constraint(m_id, ship_name):
+                    feasible = self._tidal.find_next_start(
+                        m_id,
+                        s,
+                        w_p,
+                        ship_name=ship_name,
+                    )
+                    if feasible == float("inf"):
+                        schedule_df = self._build_schedule_df(results)
+                        metrics = build_infeasible_metrics(
+                            reason=(
+                                "tidal_window_not_found:"
+                                f"machine_id={m_id},job_id={w_job},voyage={w_v},op_seq={w_op}"
+                            )
+                        )
+                        return schedule_df, metrics
+
+                    tidal_wait = feasible - s
+                    s = feasible
 
                 c = s + w_p
                 machine_active[m_id] += 1
@@ -220,28 +208,44 @@ class ActiveScheduleDecoder:
 
                 heapq.heappush(
                     events,
-                    (c, 1, next(counter), w_job, w_v, w_op)
+                    (c, 1, next(counter), w_job, w_v, w_op, w_arrival)
                 )
 
-        schedule_df = (
-            pd.DataFrame(results)
-            .sort_values(['job_id', 'voyage', 'op_seq'])
-            .reset_index(drop=True)
-        )
+        schedule_df = self._build_schedule_df(results)
 
         metrics = self._compute_metrics(schedule_df)
-        metrics['conflict_resolved_count'] = conflict_resolved_count
 
         return schedule_df, metrics
 
 
     def fitness(self, X: np.ndarray) -> float:
         _, metrics = self.decode_from_continuous(X)
-        return metrics['weighted_avg_tardiness']
+        return metrics['total_tardiness']
 
 
     def _compute_metrics(self, schedule_df: pd.DataFrame) -> dict:
         return compute_schedule_metrics(schedule_df, self._job_target)
+
+
+    @staticmethod
+    def _build_schedule_df(results: list[dict]) -> pd.DataFrame:
+        columns = [
+            'job_id',
+            'voyage',
+            'machine_id',
+            'op_seq',
+            'A_lj',
+            'S_lj',
+            'C_lj',
+            'p_lj',
+            'tidal_wait',
+            'congestion_wait',
+        ]
+        if not results:
+            return pd.DataFrame(columns=columns)
+        return pd.DataFrame(results, columns=columns).sort_values(
+            ['job_id', 'voyage', 'op_seq']
+        ).reset_index(drop=True)
 
 
     def get_dimension(self) -> int:
