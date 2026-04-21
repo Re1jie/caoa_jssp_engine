@@ -51,11 +51,30 @@ class ActiveScheduleDecoder:
         self._tidal = tidal_checker
 
         self._job_target = {}
+        min_required_by_job = (
+            df_ops.sort_values(['job_id', 'voyage', 'op_seq'])
+            .groupby(['job_id', 'voyage'], as_index=False)
+            .apply(
+                lambda group: pd.Series({
+                    'total_processing_time': float(group['p_lj'].sum()),
+                    'total_sailing_time': float(group['TSail_lj'].iloc[:-1].sum()),
+                }),
+                include_groups=False,
+            )
+        )
+        min_required_lookup = {
+            (int(row['job_id']), int(row['voyage'])): (
+                float(row['total_processing_time']) + float(row['total_sailing_time'])
+            )
+            for _, row in min_required_by_job.iterrows()
+        }
         if df_job_target is not None:
             for _, row in df_job_target.iterrows():
-                self._job_target[(int(row['job_id']), int(row['voyage']))] = {
+                key = (int(row['job_id']), int(row['voyage']))
+                self._job_target[key] = {
                     'target_time': float(row['T_j']),
                     'weight': float(row['w_j']) if 'w_j' in row.index and pd.notna(row['w_j']) else 1.0,
+                    'min_required_time': min_required_lookup.get(key, 0.0),
                 }
 
         # Dimensi direduksi menjadi per voyage

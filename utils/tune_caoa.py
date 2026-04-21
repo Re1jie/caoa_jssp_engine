@@ -150,7 +150,7 @@ def save_best_result(
     best_params = dict(best_trial.params)
     best_params.update(
         {
-            "objective": "weighted_avg_tardiness",
+            "objective": "weighted_avg_tardiness_adjusted",
             "weights": {"w_j_default": 1.0},
             "mode": mode,
             "max_FEs": max_fes,
@@ -242,7 +242,7 @@ def main():
     print("Memulai tuning CAOA")
     print(f"- Mode                    : {config['mode']}")
     print(f"- Dimensi                : {dim}")
-    print(f"- Objective              : weighted_avg_tardiness")
+    print(f"- Objective              : weighted_avg_tardiness_adjusted")
     print(f"- Max FEs per run        : {config['max_fes']}")
     print(f"- Repeat per trial       : {config['n_repeats']}")
     print(f"- Trial budget           : {config['n_trials']}")

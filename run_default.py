@@ -16,11 +16,15 @@ def objective_function(X, decoder):
 
 def build_voyage_debug_report(schedule_df, df_ops, df_job_target):
     op_summary = (
-        df_ops.groupby(['job_id', 'voyage'], as_index=False)
-        .agg(
-            planned_operation_hours=('p_lj', 'sum'),
-            planned_sailing_hours=('TSail_lj', 'sum'),
-            operation_count=('op_seq', 'count'),
+        df_ops.sort_values(['job_id', 'voyage', 'op_seq'])
+        .groupby(['job_id', 'voyage'], as_index=False)
+        .apply(
+            lambda group: pd.Series({
+                'planned_operation_hours': float(group['p_lj'].sum()),
+                'planned_sailing_hours': float(group['TSail_lj'].iloc[:-1].sum()),
+                'operation_count': int(group['op_seq'].count()),
+            }),
+            include_groups=False,
         )
     )
 
@@ -61,10 +65,20 @@ def build_voyage_debug_report(schedule_df, df_ops, df_job_target):
     debug_df['due_hour_absolute'] = (
         debug_df['first_arrival_hour'] + debug_df['due_window_hours']
     )
+    debug_df['min_required_hours'] = (
+        debug_df['planned_operation_hours'] + debug_df['planned_sailing_hours']
+    )
+    debug_df['slack_hours'] = (
+        debug_df['due_window_hours'] - debug_df['min_required_hours']
+    )
     debug_df['lateness_hours'] = (
         debug_df['last_completion_hour'] - debug_df['due_hour_absolute']
     )
-    debug_df['tardiness_hours'] = debug_df['lateness_hours'].clip(lower=0.0)
+    debug_df['raw_tardiness_hours'] = debug_df['lateness_hours'].clip(lower=0.0)
+    debug_df['unavoidable_tardiness_hours'] = (-debug_df['slack_hours']).clip(lower=0.0)
+    debug_df['tardiness_hours'] = (
+        debug_df['raw_tardiness_hours'] - debug_df['unavoidable_tardiness_hours']
+    ).clip(lower=0.0)
     debug_df['earliness_hours'] = (-debug_df['lateness_hours']).clip(lower=0.0)
     debug_df['slack_to_due_hours'] = (
         debug_df['due_hour_absolute'] - debug_df['last_completion_hour']
@@ -80,9 +94,7 @@ def build_voyage_debug_report(schedule_df, df_ops, df_job_target):
         debug_df['total_wait_hours'] / debug_df['actual_flow_time_hours'],
         0.0,
     )
-    debug_df['planned_total_work_hours'] = (
-        debug_df['planned_operation_hours'] + debug_df['planned_sailing_hours']
-    )
+    debug_df['planned_total_work_hours'] = debug_df['min_required_hours']
     debug_df['actual_nonprocessing_hours'] = (
         debug_df['actual_flow_time_hours'] - debug_df['actual_operation_hours']
     )
@@ -90,6 +102,11 @@ def build_voyage_debug_report(schedule_df, df_ops, df_job_target):
         debug_df['tardiness_hours'] > 0,
         'LATE',
         'ON_TIME',
+    )
+    debug_df['target_feasibility'] = np.where(
+        debug_df['slack_hours'] >= 0,
+        'FEASIBLE_TARGET',
+        'INFEASIBLE_TARGET',
     )
 
     return debug_df.sort_values(
@@ -129,12 +146,16 @@ def save_voyage_debug_report(debug_df, output_dir="data/result"):
         "voyage_count": int(len(debug_df)),
         "late_voyage_count": int((debug_df['tardiness_hours'] > 0).sum()),
         "on_time_voyage_count": int((debug_df['tardiness_hours'] <= 0).sum()),
+        "infeasible_target_count": int((debug_df['slack_hours'] < 0).sum()),
         "total_due_window_hours": float(debug_df['due_window_hours'].sum()),
+        "total_min_required_hours": float(debug_df['min_required_hours'].sum()),
         "total_actual_flow_time_hours": float(debug_df['actual_flow_time_hours'].sum()),
         "total_actual_operation_hours": float(debug_df['actual_operation_hours'].sum()),
         "total_planned_sailing_hours": float(debug_df['planned_sailing_hours'].sum()),
         "total_wait_hours": float(debug_df['total_wait_hours'].sum()),
         "total_tardiness_hours": float(debug_df['tardiness_hours'].sum()),
+        "total_raw_tardiness_hours": float(debug_df['raw_tardiness_hours'].sum()),
+        "total_unavoidable_tardiness_hours": float(debug_df['unavoidable_tardiness_hours'].sum()),
         "max_tardiness_hours": float(debug_df['tardiness_hours'].max()),
         "avg_tardiness_hours": float(debug_df['tardiness_hours'].mean()),
     }
@@ -191,13 +212,16 @@ def main():
     print("-" * 60)
     
     metrics_list = [
-        ('Objective (Avg Tardiness)', 'weighted_avg_tardiness'),
+        ('Objective (Adj Avg Tard.)', 'weighted_avg_tardiness'),
         ('Makespan (Jam)', 'makespan'),
         ('Total Kongesti (Jam)', 'total_congestion'),
         ('Total Delay Pasang (Jam)', 'total_tidal_delay'),
-        ('Total Tardiness (Jam)', 'total_tardiness'),
-        ('Rata-rata Tardiness', 'avg_tardiness'),
-        ('Maksimal Tardiness', 'max_tardiness')
+        ('Total Tardiness Adj (Jam)', 'total_tardiness'),
+        ('Rata-rata Tardiness Adj', 'avg_tardiness'),
+        ('Maksimal Tardiness Adj', 'max_tardiness'),
+        ('Total Tardiness Raw', 'raw_total_tardiness'),
+        ('Rata-rata Tardiness Raw', 'raw_avg_tardiness'),
+        ('Total Unavoidable Tard.', 'total_unavoidable_tardiness'),
     ]
 
     for label, key in metrics_list:

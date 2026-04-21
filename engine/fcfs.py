@@ -72,6 +72,8 @@ def run_fcfs_baseline(
                 results.append({
                     'job_id': job_id, 'voyage': voyage, 'machine_id': m, 'op_seq': op_seq,
                     'A_lj': t, 'S_lj': s_lj, 'C_lj': c_lj, 
+                    'p_lj': p_lj,
+                    'TSail_lj': tsail if not np.isnan(tsail) else 0.0,
                     'tidal_wait': tidal_wait,
                     'congestion_wait': max(0.0, s_lj - t - tidal_wait)
                 })
@@ -112,6 +114,9 @@ def run_fcfs_baseline(
                     'job_id': next_job_id, 'voyage': next_voyage,
                     'machine_id': m, 'op_seq': next_job_op_seq,
                     'A_lj': arr_t, 'S_lj': s_lj, 'C_lj': c_lj, 
+                    'p_lj': next_p,
+                    'TSail_lj': job_ops[next_job_key][next_job_op_seq]['TSail_lj']
+                    if not np.isnan(job_ops[next_job_key][next_job_op_seq]['TSail_lj']) else 0.0,
                     'tidal_wait': tidal_wait,
                     'congestion_wait': max(0.0, s_lj - arr_t - tidal_wait)
                 })
@@ -125,11 +130,31 @@ def run_fcfs_baseline(
     return schedule_df, metrics
 
 def _compute_fcfs_metrics(schedule_df: pd.DataFrame, df_job_target: pd.DataFrame) -> dict:
+    min_required_by_job = (
+        schedule_df.sort_values(['job_id', 'voyage', 'op_seq'])
+        .groupby(['job_id', 'voyage'], as_index=False)
+        .apply(
+            lambda group: pd.Series({
+                'total_processing_time': float(group['p_lj'].sum()),
+                'total_sailing_time': float(group['TSail_lj'].iloc[:-1].sum()),
+            }),
+            include_groups=False,
+        )
+    )
+    min_required_lookup = {
+        (int(row['job_id']), int(row['voyage'])): (
+            float(row['total_processing_time']) + float(row['total_sailing_time'])
+        )
+        for _, row in min_required_by_job.iterrows()
+    }
+
     target_dict = {}
     for _, row in df_job_target.iterrows():
-        target_dict[(int(row['job_id']), int(row['voyage']))] = {
+        key = (int(row['job_id']), int(row['voyage']))
+        target_dict[key] = {
             'target_time': float(row['T_j']),
             'weight': float(row['w_j']) if 'w_j' in row.index and pd.notna(row['w_j']) else 1.0,
+            'min_required_time': min_required_lookup.get(key, 0.0),
         }
 
     return compute_schedule_metrics(schedule_df, target_dict)

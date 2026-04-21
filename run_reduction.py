@@ -46,13 +46,16 @@ def main():
     print("-" * 60)
     
     metrics_list = [
-        ('Objective (Avg Tardiness)', 'weighted_avg_tardiness'),
+        ('Objective (Adj Avg Tard.)', 'weighted_avg_tardiness'),
         ('Makespan (Jam)', 'makespan'),
         ('Total Kongesti (Jam)', 'total_congestion'),
         ('Total Delay Pasang (Jam)', 'total_tidal_delay'),
-        ('Total Tardiness (Jam)', 'total_tardiness'),
-        ('Rata-rata Tardiness', 'avg_tardiness'),
-        ('Maksimal Tardiness', 'max_tardiness')
+        ('Total Tardiness Adj (Jam)', 'total_tardiness'),
+        ('Rata-rata Tardiness Adj', 'avg_tardiness'),
+        ('Maksimal Tardiness Adj', 'max_tardiness'),
+        ('Total Tardiness Raw', 'raw_total_tardiness'),
+        ('Rata-rata Tardiness Raw', 'raw_avg_tardiness'),
+        ('Total Unavoidable Tard.', 'total_unavoidable_tardiness'),
     ]
 
     for label, key in metrics_list:
