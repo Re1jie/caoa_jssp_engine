@@ -1,10 +1,8 @@
 import json
 from pathlib import Path
-
 import numpy as np
-
 from engine.caoa import CAOA
-from engine.decoder import ActiveScheduleDecoder
+from engine.decoder_insertion import ActiveScheduleDecoder
 from engine.fcfs import run_fcfs_baseline
 from engine.tidal_checker import TidalChecker
 from utils.data_loader import load_real_jssp_data
@@ -114,6 +112,7 @@ def main():
     # Load Data & Init
     df_ops, df_machine_master, df_job_target = load_real_jssp_data("data/processed/")
     dim = len(df_ops)
+    print(f"[Dimensi] {dim}")
     tidal_checker = TidalChecker()
 
     # Baseline FCFS
@@ -158,7 +157,7 @@ def main():
     print("-" * 60)
     
     metrics_list = [
-        ('Objective (Total Tard.)', 'total_tardiness'),
+        ('Total Tardiness)', 'total_tardiness'),
         ('Max Tardiness', 'max_tardiness'),
     ]
 

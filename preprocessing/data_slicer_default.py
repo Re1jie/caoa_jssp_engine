@@ -52,4 +52,4 @@ def slice_data_by_region_and_time(
     print(f"Slicing Region: {region} | Jobs: {len(original_jobs)} | Operations: {len(sliced_df)}")
 
 if __name__ == "__main__":
-    slice_data_by_region_and_time(region="Timur", max_layers=999)
+    slice_data_by_region_and_time(region="Timur", max_layers=10)

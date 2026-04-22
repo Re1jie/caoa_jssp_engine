@@ -1,7 +1,7 @@
 {
-    "total_tardiness": 13425.0,
-    "max_tardiness": 1345.0,
-    "late_voyage_count": 84,
+    "total_tardiness": 3584.0,
+    "max_tardiness": 1229.0,
+    "late_voyage_count": 21,
     "is_feasible": true,
     "infeasible_reason": null,
     "penalty_tardiness": 0.0
