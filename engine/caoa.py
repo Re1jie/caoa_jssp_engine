@@ -101,7 +101,7 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.3, beta=0.1, gamma=0.1, delta=1
         total_time = time.perf_counter() - start_total
         
         # Tampilkan stats per iterasi
-        if (t + 1) % 5 == 0 or t == 0:
+        if (t + 1) % 1 == 0 or t == 0:
             print(
                 f"Iterasi {t+1}/{max_iter} | "
                 f"Populasi: {N} | "

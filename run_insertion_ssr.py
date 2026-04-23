@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import numpy as np
-from engine.caoa import CAOA
+from engine.caoassr import CAOA_SSR
 from engine.decoder_insertion import ActiveScheduleDecoder
 from engine.fcfs import run_fcfs_baseline
 from engine.tidal_checker import TidalChecker
@@ -58,9 +58,9 @@ def save_optimized_results(schedule_df, metrics, best_position, output_dir="data
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    timetable_path = output_path / "caoa_optimized_timetable.csv"
-    metrics_path = output_path / "caoa_optimized_metrics.json"
-    position_path = output_path / "caoa_best_position.npy"
+    timetable_path = output_path / "caoassr_optimized_timetable.csv"
+    metrics_path = output_path / "caoassr_optimized_metrics.json"
+    position_path = output_path / "caoassr_best_position.npy"
 
     schedule_df.to_csv(timetable_path, index=False)
     metrics_path.write_text(
@@ -92,8 +92,8 @@ def save_voyage_debug_report(debug_df, output_dir="data/result"):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    debug_path = output_path / "caoa_voyage_debug_report.csv"
-    summary_path = output_path / "caoa_voyage_debug_summary.json"
+    debug_path = output_path / "caoassr_voyage_debug_report.csv"
+    summary_path = output_path / "caoassr_voyage_debug_summary.json"
 
     debug_df.to_csv(debug_path, index=False)
 
@@ -231,8 +231,8 @@ def save_schedule_comparison(
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    voyage_path = output_path / "fcfs_vs_caoa_voyage_comparison.csv"
-    operation_path = output_path / "fcfs_vs_caoa_operation_comparison.csv"
+    voyage_path = output_path / "fcfs_vs_caoassr_voyage_comparison.csv"
+    operation_path = output_path / "fcfs_vs_caoassr_operation_comparison.csv"
 
     voyage_comparison_df.to_csv(voyage_path, index=False)
     operation_comparison_df.to_csv(operation_path, index=False)
@@ -287,9 +287,42 @@ def main():
         'initial_energy': 150
     }
 
-    _, best_position, _, _ = CAOA(
+    caoa_ssr_params = {
+        'IT': 5,
+        'K': 30,
+        'stagnation_window': 30,
+        'eps_improve': 1.0,
+        'eps_std': 0.10,
+        'rho_pos': 0.15,
+        'rho_neg': 0.15,
+        'eta_shrink': 0.08,
+        'elite_size': 5,
+        'min_interval': 0.05,
+        'machine_family_threshold': 0.70,
+        'ranking_collapse_threshold': 0.08,
+        'structural_distance_threshold': 0.25,
+        'critical_k': 20,
+        'use_machine_order_signature': True,
+        'use_critical_order_signature': True,
+        'use_ranking_similarity': True,
+        'stagnation_mode': 'rule',
+        'stagnation_score_weights': {
+            'fitness': 0.5,
+            'machine_order': 0.3,
+            'ranking': 0.2,
+        },
+        'M_refocus': 3,
+        'use_elite_mean': True,
+        'partial_restart_ratio': 0.25,
+        'restart_sigma': 0.20,
+        'restart_uniform_mix': 0.15,
+    }
+
+    _, best_position, _, _, ssr_info = CAOA_SSR(
         **caoa_params,
-        fobj=lambda X: objective_function(X, decoder)
+        decoder=decoder,
+        return_diagnostics=True,
+        **caoa_ssr_params,
     )
 
     caoa_schedule_df, caoa_metrics = decoder.decode_from_continuous(best_position)
@@ -336,6 +369,7 @@ def main():
     print(f"- Debug sum : {voyage_summary_path}")
     print(f"- Compare V : {voyage_comparison_path}")
     print(f"- Compare O : {operation_comparison_path}")
+    print(f"- SSR checks: {len(ssr_info['best_score_history'])}")
 
 if __name__ == "__main__":
     main()
