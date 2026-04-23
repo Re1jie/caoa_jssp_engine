@@ -400,23 +400,33 @@ def reinitialize_in_reduced_space(
     return np.clip(local, low_dyn, up_dyn)
 
 
-def _evaluate_candidate(x, fobj=None, decoder=None, critical_k=20):
+def _evaluate_candidate(
+    x,
+    fobj=None,
+    decoder=None,
+    critical_k=20,
+    compute_machine_signature=False,
+    compute_critical_signature=False,
+):
     if decoder is not None:
         schedule_df, metrics = decoder.decode_from_continuous(x)
         fitness = float(metrics["total_tardiness"])
         decoded_signature = _schedule_signature_from_dataframe(schedule_df)
-        machine_order_signature = compute_machine_order_signature(schedule_df)
-        critical_order_signature = compute_critical_order_signature(
-            schedule_df,
-            critical_k=critical_k,
-        )
         return {
             "fitness": fitness,
             "schedule_df": schedule_df,
             "metrics": metrics,
             "decoded_signature": decoded_signature,
-            "machine_order_signature": machine_order_signature,
-            "critical_order_signature": critical_order_signature,
+            "machine_order_signature": (
+                compute_machine_order_signature(schedule_df)
+                if compute_machine_signature
+                else None
+            ),
+            "critical_order_signature": (
+                compute_critical_order_signature(schedule_df, critical_k=critical_k)
+                if compute_critical_signature
+                else None
+            ),
             "ranking_signature": _compute_ranking_signature(x),
             "continuous_signature": _compute_continuous_signature(x),
         }
@@ -435,6 +445,27 @@ def _evaluate_candidate(x, fobj=None, decoder=None, critical_k=20):
         "ranking_signature": _compute_ranking_signature(x),
         "continuous_signature": _compute_continuous_signature(x),
     }
+
+
+def _collect_structural_signatures(
+    schedule_dfs,
+    critical_k=20,
+    use_machine_order_signature=True,
+    use_critical_order_signature=True,
+):
+    machine_order_signatures = [None] * len(schedule_dfs)
+    critical_order_signatures = [None] * len(schedule_dfs)
+
+    for idx, schedule_df in enumerate(schedule_dfs):
+        if use_machine_order_signature:
+            machine_order_signatures[idx] = compute_machine_order_signature(schedule_df)
+        if use_critical_order_signature:
+            critical_order_signatures[idx] = compute_critical_order_signature(
+                schedule_df,
+                critical_k=critical_k,
+            )
+
+    return machine_order_signatures, critical_order_signatures
 
 
 def _update_elite_archive(
@@ -553,6 +584,7 @@ def CAOA_SSR(
 
     energies = np.full(N, initial_energy, dtype=float)
     fitness = np.zeros(N, dtype=float)
+    schedule_dfs = [None] * N
     decoded_signatures = [None] * N
     machine_order_signatures = [None] * N
     critical_order_signatures = [None] * N
@@ -561,11 +593,15 @@ def CAOA_SSR(
 
     fe_counter = 0
     for i in range(N):
-        evaluation = _evaluate_candidate(pos[i], fobj=fobj, decoder=decoder, critical_k=critical_k)
+        evaluation = _evaluate_candidate(
+            pos[i],
+            fobj=fobj,
+            decoder=decoder,
+            critical_k=critical_k,
+        )
         fitness[i] = evaluation["fitness"]
+        schedule_dfs[i] = evaluation["schedule_df"]
         decoded_signatures[i] = evaluation["decoded_signature"]
-        machine_order_signatures[i] = evaluation["machine_order_signature"]
-        critical_order_signatures[i] = evaluation["critical_order_signature"]
         ranking_signatures[i] = evaluation["ranking_signature"]
         continuous_signatures[i] = evaluation["continuous_signature"]
         fe_counter += 1
@@ -574,7 +610,7 @@ def CAOA_SSR(
     gBestScore = float(fitness[best_idx])
     gBest = pos[best_idx].copy()
     gBestDecodedSignature = decoded_signatures[best_idx]
-    gBestMachineOrderSignature = machine_order_signatures[best_idx]
+    gBestMachineOrderSignature = None
 
     best_score_history = []
     best_decoded_signature_history = []
@@ -588,10 +624,8 @@ def CAOA_SSR(
         "unique_continuous_count": int(len(set(continuous_signatures))),
         "unique_ranking_count": int(len(set(ranking_signatures))),
         "unique_schedule_count": int(len(set(sig for sig in decoded_signatures if sig is not None))),
-        "unique_machine_family_count": int(len(set(sig for sig in machine_order_signatures if sig is not None))),
-        "unique_critical_signature_count": int(
-            len(set(sig for sig in critical_order_signatures if sig is not None))
-        ) if use_critical_order_signature else 0,
+        "unique_machine_family_count": 0,
+        "unique_critical_signature_count": 0,
         "avg_machine_order_distance": 0.0,
         "avg_ranking_distance": 0.0,
         "dup_ratio_to_gbest": float(
@@ -634,7 +668,12 @@ def CAOA_SSR(
             new_pos = pos[i] + alpha * (leader_pos - pos[i]) + beta * (1.0 - 2.0 * r)
             new_pos = np.clip(new_pos, low_dyn, up_dyn)
 
-            evaluation = _evaluate_candidate(new_pos, fobj=fobj, decoder=decoder, critical_k=critical_k)
+            evaluation = _evaluate_candidate(
+                new_pos,
+                fobj=fobj,
+                decoder=decoder,
+                critical_k=critical_k,
+            )
             new_fit = evaluation["fitness"]
             fe_counter += 1
 
@@ -647,16 +686,22 @@ def CAOA_SSR(
                         restart_sigma=restart_sigma,
                         uniform_mix=restart_uniform_mix,
                     )
-                    evaluation = _evaluate_candidate(new_pos, fobj=fobj, decoder=decoder, critical_k=critical_k)
+                    evaluation = _evaluate_candidate(
+                        new_pos,
+                        fobj=fobj,
+                        decoder=decoder,
+                        critical_k=critical_k,
+                    )
                     new_fit = evaluation["fitness"]
                     fe_counter += 1
                     deterioration_reinit_count += 1
 
             pos[i] = new_pos
             fitness[i] = new_fit
+            schedule_dfs[i] = evaluation["schedule_df"]
             decoded_signatures[i] = evaluation["decoded_signature"]
-            machine_order_signatures[i] = evaluation["machine_order_signature"]
-            critical_order_signatures[i] = evaluation["critical_order_signature"]
+            machine_order_signatures[i] = None
+            critical_order_signatures[i] = None
             ranking_signatures[i] = evaluation["ranking_signature"]
             continuous_signatures[i] = evaluation["continuous_signature"]
 
@@ -674,11 +719,17 @@ def CAOA_SSR(
                         uniform_mix=restart_uniform_mix,
                     )
                     energies[i] = initial_energy
-                    evaluation = _evaluate_candidate(pos[i], fobj=fobj, decoder=decoder, critical_k=critical_k)
+                    evaluation = _evaluate_candidate(
+                        pos[i],
+                        fobj=fobj,
+                        decoder=decoder,
+                        critical_k=critical_k,
+                    )
                     fitness[i] = evaluation["fitness"]
+                    schedule_dfs[i] = evaluation["schedule_df"]
                     decoded_signatures[i] = evaluation["decoded_signature"]
-                    machine_order_signatures[i] = evaluation["machine_order_signature"]
-                    critical_order_signatures[i] = evaluation["critical_order_signature"]
+                    machine_order_signatures[i] = None
+                    critical_order_signatures[i] = None
                     ranking_signatures[i] = evaluation["ranking_signature"]
                     continuous_signatures[i] = evaluation["continuous_signature"]
                     fe_counter += 1
@@ -688,14 +739,18 @@ def CAOA_SSR(
             gBestScore = float(fitness[best_idx])
             gBest = pos[best_idx].copy()
             gBestDecodedSignature = decoded_signatures[best_idx]
-            gBestMachineOrderSignature = machine_order_signatures[best_idx]
+            gBestMachineOrderSignature = None
 
+        archive_signatures = [
+            machine_sig if machine_sig is not None else decoded_sig
+            for machine_sig, decoded_sig in zip(machine_order_signatures, decoded_signatures)
+        ]
         elite_archive = _update_elite_archive(
             elite_archive=elite_archive,
             pos=pos,
             fitness=fitness,
             decoded_signatures=decoded_signatures,
-            archive_signatures=machine_order_signatures,
+            archive_signatures=archive_signatures,
             elite_size=elite_size,
         )
         ref_center = build_refocus_center(
@@ -720,6 +775,31 @@ def CAOA_SSR(
         }
 
         if check_this_iter:
+            machine_order_signatures, critical_order_signatures = _collect_structural_signatures(
+                schedule_dfs=schedule_dfs,
+                critical_k=critical_k,
+                use_machine_order_signature=use_machine_order_signature,
+                use_critical_order_signature=use_critical_order_signature,
+            )
+            archive_signatures = [
+                machine_sig if machine_sig is not None else decoded_sig
+                for machine_sig, decoded_sig in zip(machine_order_signatures, decoded_signatures)
+            ]
+            elite_archive = _update_elite_archive(
+                elite_archive=elite_archive,
+                pos=pos,
+                fitness=fitness,
+                decoded_signatures=decoded_signatures,
+                archive_signatures=archive_signatures,
+                elite_size=elite_size,
+            )
+            ref_center = build_refocus_center(
+                elite_archive=elite_archive,
+                dim=dim,
+                M_refocus=M_refocus,
+                use_elite_mean=use_elite_mean,
+            )
+            gBestMachineOrderSignature = machine_order_signatures[best_idx] if use_machine_order_signature else None
             best_score_history.append({"iter": t + 1, "score": float(gBestScore)})
             best_decoded_signature_history.append(
                 {"iter": t + 1, "signature": gBestDecodedSignature}
@@ -810,7 +890,7 @@ def CAOA_SSR(
                 protected_elite_indices = set(
                     _select_protected_elite_indices(
                         fitness=fitness,
-                        archive_signatures=machine_order_signatures,
+                        archive_signatures=archive_signatures,
                         elite_size=elite_size,
                     )
                 )
@@ -832,29 +912,48 @@ def CAOA_SSR(
                         uniform_mix=restart_uniform_mix,
                     )
                     energies[idx] = initial_energy
-                    evaluation = _evaluate_candidate(pos[idx], fobj=fobj, decoder=decoder, critical_k=critical_k)
+                    evaluation = _evaluate_candidate(
+                        pos[idx],
+                        fobj=fobj,
+                        decoder=decoder,
+                        critical_k=critical_k,
+                    )
                     fitness[idx] = evaluation["fitness"]
+                    schedule_dfs[idx] = evaluation["schedule_df"]
                     decoded_signatures[idx] = evaluation["decoded_signature"]
-                    machine_order_signatures[idx] = evaluation["machine_order_signature"]
-                    critical_order_signatures[idx] = evaluation["critical_order_signature"]
+                    machine_order_signatures[idx] = None
+                    critical_order_signatures[idx] = None
                     ranking_signatures[idx] = evaluation["ranking_signature"]
                     continuous_signatures[idx] = evaluation["continuous_signature"]
                     fe_counter += 1
                     partial_restart_count += 1
+
+                machine_order_signatures, critical_order_signatures = _collect_structural_signatures(
+                    schedule_dfs=schedule_dfs,
+                    critical_k=critical_k,
+                    use_machine_order_signature=use_machine_order_signature,
+                    use_critical_order_signature=use_critical_order_signature,
+                )
+                archive_signatures = [
+                    machine_sig if machine_sig is not None else decoded_sig
+                    for machine_sig, decoded_sig in zip(machine_order_signatures, decoded_signatures)
+                ]
 
                 best_idx = int(np.argmin(fitness))
                 if fitness[best_idx] < gBestScore:
                     gBestScore = float(fitness[best_idx])
                     gBest = pos[best_idx].copy()
                     gBestDecodedSignature = decoded_signatures[best_idx]
-                    gBestMachineOrderSignature = machine_order_signatures[best_idx]
+                    gBestMachineOrderSignature = (
+                        machine_order_signatures[best_idx] if use_machine_order_signature else None
+                    )
 
                 elite_archive = _update_elite_archive(
                     elite_archive=elite_archive,
                     pos=pos,
                     fitness=fitness,
                     decoded_signatures=decoded_signatures,
-                    archive_signatures=machine_order_signatures,
+                    archive_signatures=archive_signatures,
                     elite_size=elite_size,
                 )
                 ref_center = build_refocus_center(
@@ -893,7 +992,7 @@ def CAOA_SSR(
             gBestScore = float(fitness[best_idx])
             gBest = pos[best_idx].copy()
             gBestDecodedSignature = decoded_signatures[best_idx]
-            gBestMachineOrderSignature = machine_order_signatures[best_idx]
+            gBestMachineOrderSignature = None
 
         cg_curve.append(gBestScore)
         avg_curve.append(float(np.mean(fitness)))
