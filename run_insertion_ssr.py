@@ -348,7 +348,7 @@ def main():
     )
 
     # 4. Reporting
-    print(f"\n{'METRIK':<25} | {'FCFS':<15} | {'CAOA':<15}")
+    print(f"\n{'METRIK':<25} | {'FCFS':<15} | {'CAOASSR':<15}")
     print("-" * 60)
     
     metrics_list = [
