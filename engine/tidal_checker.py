@@ -24,40 +24,69 @@ class TidalChecker:
         constraints_df = pd.read_csv(constraints_path)
         for machine_id, grp in constraints_df.groupby("machine_id"):
             mid = int(machine_id)
+            modes = set(grp["mode"].astype(str).str.strip().str.lower())
+            if len(modes) != 1:
+                raise ValueError(
+                    f"Machine {mid} punya lebih dari satu mode tidal: {sorted(modes)}"
+                )
+
+            e_mins = set(grp["E_min"].astype(float))
+            if len(e_mins) != 1:
+                raise ValueError(
+                    f"Machine {mid} punya lebih dari satu E_min: {sorted(e_mins)}"
+                )
+
+            buffers = set(grp["buffer_time"].astype(float))
+            if len(buffers) != 1:
+                raise ValueError(
+                    f"Machine {mid} punya lebih dari satu buffer_time: {sorted(buffers)}"
+                )
+
             self._tidal_machine_ids.add(mid)
             self._constraints[mid] = {
                 "port_name":   grp["port_name"].iloc[0],
+                "mode":        grp["mode"].iloc[0],
                 "E_min":       float(grp["E_min"].iloc[0]),
                 "buffer_time": float(grp["buffer_time"].iloc[0]),
                 "ships":       set(grp["ship_name"].tolist()),
             }
 
         # Load feasible windows
-        # Dua set array terpisah per machine:
-        #   _arr: arrival windows  → A_{l,j} harus masuk interval [arr_start, arr_end]
-        #   _dep: departure windows → C_{l,j} harus masuk interval [dep_start, dep_end]
+        # Mode `alur` memakai arrival/departure windows.
+        # Mode `sandar` memakai raw feasible windows.
         self._arr_starts: dict[int, np.ndarray] = {}
         self._arr_ends:   dict[int, np.ndarray] = {}
         self._dep_starts: dict[int, np.ndarray] = {}
         self._dep_ends:   dict[int, np.ndarray] = {}
+        self._raw_starts: dict[int, np.ndarray] = {}
+        self._raw_ends:   dict[int, np.ndarray] = {}
 
         windows_df = pd.read_csv(windows_path)
         for machine_id, grp in windows_df.groupby("machine_id"):
             mid = int(machine_id)
             grp_sorted = grp.sort_values("raw_window_start").reset_index(drop=True)
+            mode = self._constraints[mid]["mode"]
 
-            # Arrival intervals: [arrival_start, arrival_end]
-            # A valid arrival window has arrival_start < arrival_end
-            arr_mask = grp_sorted["arrival_start"] < grp_sorted["arrival_end"]
-            arr = grp_sorted[arr_mask]
-            self._arr_starts[mid] = arr["arrival_start"].values
-            self._arr_ends[mid]   = arr["arrival_end"].values
+            self._raw_starts[mid] = grp_sorted["raw_window_start"].to_numpy(dtype=float)
+            self._raw_ends[mid]   = grp_sorted["raw_window_end"].to_numpy(dtype=float)
 
-            # Departure intervals: [departure_start, departure_end]
-            dep_mask = grp_sorted["departure_start"] < grp_sorted["departure_end"]
-            dep = grp_sorted[dep_mask]
-            self._dep_starts[mid] = dep["departure_start"].values
-            self._dep_ends[mid]   = dep["departure_end"].values
+            if mode == "alur":
+                # Arrival intervals: [arrival_start, arrival_end]
+                arr_mask = grp_sorted["arrival_start"] < grp_sorted["arrival_end"]
+                arr = grp_sorted[arr_mask]
+                self._arr_starts[mid] = arr["arrival_start"].to_numpy(dtype=float)
+                self._arr_ends[mid]   = arr["arrival_end"].to_numpy(dtype=float)
+
+                # Departure intervals: [departure_start, departure_end]
+                dep_mask = grp_sorted["departure_start"] < grp_sorted["departure_end"]
+                dep = grp_sorted[dep_mask]
+                self._dep_starts[mid] = dep["departure_start"].to_numpy(dtype=float)
+                self._dep_ends[mid]   = dep["departure_end"].to_numpy(dtype=float)
+            else:
+                self._arr_starts[mid] = np.array([], dtype=float)
+                self._arr_ends[mid]   = np.array([], dtype=float)
+                self._dep_starts[mid] = np.array([], dtype=float)
+                self._dep_ends[mid]   = np.array([], dtype=float)
 
         # Hourly lookup (lazy)
         self._hourly_path = Path(hourly_path)
@@ -65,10 +94,12 @@ class TidalChecker:
 
         n_arr = sum(len(v) for v in self._arr_starts.values())
         n_dep = sum(len(v) for v in self._dep_starts.values())
+        n_raw = sum(len(v) for v in self._raw_starts.values())
         print(
             f"[TidalChecker] Loaded: "
             f"{len(self._tidal_machine_ids)} tidal machines | "
-            f"{n_arr} arrival windows | {n_dep} departure windows"
+            f"{n_arr} arrival windows | {n_dep} departure windows | "
+            f"{n_raw} raw windows"
         )
 
     # Public API
@@ -100,24 +131,31 @@ class TidalChecker:
         if not self.has_tidal_constraint(mid, ship_name):
             return True
 
+        mode = self._constraints[mid]["mode"]
         end_h = start_h + duration_h
 
-        # Cek 1: A_{l,j} masuk arrival window?
-        before_ok = self._point_in_intervals(
-            self._arr_starts.get(mid, np.array([])),
-            self._arr_ends.get(mid, np.array([])),
-            start_h,
-        )
-        if not before_ok:
-            return False
+        if mode == "alur":
+            before_ok = self._point_in_intervals(
+                self._arr_starts.get(mid, np.array([])),
+                self._arr_ends.get(mid, np.array([])),
+                start_h,
+            )
+            if not before_ok:
+                return False
 
-        # Cek 2: C_{l,j} masuk departure window?
-        after_ok = self._point_in_intervals(
-            self._dep_starts.get(mid, np.array([])),
-            self._dep_ends.get(mid, np.array([])),
+            after_ok = self._point_in_intervals(
+                self._dep_starts.get(mid, np.array([])),
+                self._dep_ends.get(mid, np.array([])),
+                end_h,
+            )
+            return after_ok
+
+        return self._interval_overlaps_raw_window(
+            self._raw_starts.get(mid, np.array([])),
+            self._raw_ends.get(mid, np.array([])),
+            start_h,
             end_h,
         )
-        return after_ok
 
     def find_next_start(
         self,
@@ -129,6 +167,10 @@ class TidalChecker:
         mid = int(machine_id)
         if not self.has_tidal_constraint(mid, ship_name):
             return earliest_h
+
+        mode = self._constraints[mid]["mode"]
+        if mode == "sandar":
+            return self._find_next_start_sandar(mid, earliest_h, duration_h)
 
         arr_starts = self._arr_starts.get(mid, np.array([]))
         arr_ends   = self._arr_ends.get(mid,   np.array([]))
@@ -216,8 +258,10 @@ class TidalChecker:
             rows.append({
                 "machine_id":    mid,
                 "port_name":     cfg["port_name"],
+                "mode":          cfg["mode"],
                 "E_min":         cfg["E_min"],
                 "buffer_time":   cfg["buffer_time"],
+                "n_raw_windows": len(self._raw_starts.get(mid, [])),
                 "n_arr_windows": len(self._arr_starts.get(mid, [])),
                 "n_dep_windows": len(self._dep_starts.get(mid, [])),
                 "ships":         ", ".join(sorted(cfg["ships"])),
@@ -240,6 +284,52 @@ class TidalChecker:
             return True
         return False
 
+    @staticmethod
+    def _interval_overlaps_raw_window(
+        raw_starts: np.ndarray,
+        raw_ends: np.ndarray,
+        start_h: float,
+        end_h: float,
+    ) -> bool:
+        """
+        Mode sandar:
+        feasible jika interval [start_h, end_h] overlap dengan minimal satu
+        raw feasible window [raw_start, raw_end].
+        """
+        if len(raw_starts) == 0 or end_h < start_h:
+            return False
+
+        idx = int(np.searchsorted(raw_ends, start_h, side="left"))
+        if idx >= len(raw_starts):
+            return False
+        return raw_starts[idx] <= end_h
+
+    def _find_next_start_sandar(
+        self,
+        machine_id: int,
+        earliest_h: float,
+        duration_h: float,
+    ) -> float:
+        """
+        Cari start S >= earliest_h sehingga [S, S+p] overlap dengan minimal
+        satu raw feasible window [w_start, w_end].
+
+        Untuk satu raw window, himpunan S yang feasible adalah:
+        S in [w_start - p, w_end]
+        """
+        raw_starts = self._raw_starts.get(machine_id, np.array([]))
+        raw_ends   = self._raw_ends.get(machine_id,   np.array([]))
+
+        if len(raw_starts) == 0:
+            return float("inf")
+
+        for w_start, w_end in zip(raw_starts, raw_ends):
+            candidate = max(earliest_h, w_start - duration_h)
+            if candidate <= w_end:
+                return candidate
+
+        return float("inf")
+
     def _ensure_hourly_loaded(self):
         if self._hourly is not None:
             return
@@ -249,7 +339,7 @@ class TidalChecker:
         df = pd.read_csv(self._hourly_path)
         df["hour_offset"] = df["hour_offset"].round(0).astype(int)
         for machine_id, grp in df.groupby("machine_id"):
-            self._hourly[int(machine_id)] = grp.reset_index(drop=True)
+            self._hourly[int(machine_id)] = grp.sort_values("hour_offset").reset_index(drop=True)
 
 
 # CLI Sanity Check
@@ -260,11 +350,9 @@ if __name__ == "__main__":
     print("\n=== Summary TidalChecker ===")
     print(checker.summary().to_string(index=False))
 
-    print("\n=== Verifikasi Contoh User ===")
-    print("Skenario: kapal sandar jam 8-10 (A=8, p=2, C=10), buffer=2")
-    print("  Cek sebelum : [6, 8]  harus dalam suatu raw window")
-    print("  Cek sesudah : [10, 12] harus dalam suatu raw window")
-    print("  Tide jam 8-10 (selama sandar) → TIDAK dipedulikan")
+    print("\n=== Verifikasi Ringkas ===")
+    print("Mode `alur`   : cek arrival window + departure window seperti sebelumnya")
+    print("Mode `sandar` : feasible jika [S_lj, C_lj] overlap dengan minimal satu raw feasible window")
     print()
 
     print("=== Contoh Query ===")

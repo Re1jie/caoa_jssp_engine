@@ -7,10 +7,10 @@ Dokumen ini merangkum pipeline runtime yang aktif saat ini, dari data hasil prep
 Pipeline berjalan seperti ini:
 
 1. Runner memuat data operasi slice, target due, dan kapasitas machine dari `data/processed/`.
-2. `TidalChecker` memuat constraint pasang surut dan feasible windows per `machine_id`.
+2. `TidalChecker` memuat constraint pasang surut per `machine_id`, termasuk mode `alur` dan `sandar`.
 3. Baseline FCFS dibangun sebagai pembanding awal.
 4. CAOA mengoptimasi vektor prioritas kontinu berdimensi `jumlah_operasi`.
-5. Decoder aktif mengubah vektor itu menjadi schedule aktual yang patuh precedence, kapasitas berth, sailing time, dan tidal window.
+5. Decoder aktif mengubah vektor itu menjadi schedule aktual yang patuh precedence, kapasitas berth, sailing time, dan constraint tidal aktif.
 6. Schedule dihitung metriknya dengan objective aktif `total_tardiness`.
 7. Jika hasil final infeasible, runner menghentikan proses dengan hard failure.
 8. Jika feasible, timetable, metrics, best position, dan debug report voyage disimpan ke `data/result/`.
@@ -95,6 +95,11 @@ Karakter baseline:
 
 Jika berth tersedia, operasi langsung dicoba dijadwalkan. Jika tidal aktif, start digeser ke feasible window berikutnya. Jika tidak ada window feasible, baseline langsung mengembalikan metrics infeasible.
 
+Interpretasi tidal yang dipakai baseline:
+
+- `mode='alur'`: start operasi harus memenuhi arrival window dan completion harus memenuhi departure window.
+- `mode='sandar'`: interval proses `[S_lj, C_lj]` harus overlap dengan minimal satu raw feasible window, artinya cukup ada satu jam/titik tidal yang memenuhi `E_min` selama kapal sandar.
+
 ## Decoder aktif untuk CAOA
 
 Implementasi aktif: [engine/decoder_insertion.py](/home/re1jie/caoa_jssp_engine/engine/decoder_insertion.py:1)
@@ -116,6 +121,11 @@ Berbeda dari decoder event-driven lama, decoder ini bekerja dengan pendekatan in
 - kapasitas dicek dengan overlap counting terhadap timeline machine
 - tidal diterapkan saat mencari slot feasible akhir
 
+Interpretasi tidal pada decoder sama persis dengan baseline:
+
+- `mode='alur'` memakai arrival/departure windows
+- `mode='sandar'` memakai overlap interval sandar terhadap raw feasible window
+
 Waktu tunggu dipisah menjadi:
 
 - `congestion_wait`: delay karena kapasitas machine
@@ -131,18 +141,22 @@ Implementasi: [engine/tidal_checker.py](/home/re1jie/caoa_jssp_engine/engine/tid
 
 - daftar machine yang terkena constraint tidal
 - ship list yang benar-benar terkena constraint per machine
-- arrival feasible windows
-- departure feasible windows
+- mode constraint per machine: `alur` atau `sandar`
+- arrival/departure feasible windows untuk mode `alur`
+- raw feasible windows untuk mode `sandar`
 - hourly lookup untuk debugging
 
 Aturan runtime:
 
 - machine non-tidal selalu feasible
 - machine tidal hanya membatasi kapal yang `ship_name`-nya terdaftar pada constraint machine tersebut
-- sebuah operasi dianggap feasible bila:
+- untuk `mode='alur'`, sebuah operasi dianggap feasible bila:
   - `start_h` berada di arrival window
   - `end_h = start_h + duration` berada di departure window
-- `find_next_start(...)` mencari start feasible paling awal yang memenuhi dua syarat itu
+- untuk `mode='sandar'`, sebuah operasi dianggap feasible bila:
+  - interval `[start_h, end_h]` overlap dengan minimal satu raw feasible window
+  - ekuivalen dengan adanya minimal satu nilai `is_feasible = true` selama kapal sandar
+- `find_next_start(...)` mencari start feasible paling awal sesuai mode constraint machine tersebut
 
 Jika tidak ada start feasible, sistem menganggap operasi gagal secara hard failure, bukan soft penalty tambahan selain penalti infeasible global.
 
@@ -221,6 +235,9 @@ Perubahan penting yang sudah tercermin di codebase saat ini:
 - decoder aktif sudah pindah ke model insertion/capacity-aware slot search
 - objective runtime berfokus pada tardiness standar
 - infeasibility tidal ditangani sebagai hard failure
+- tidal sekarang mendukung dua mode hard constraint:
+  - `alur` untuk aturan arrival/departure window
+  - `sandar` untuk aturan overlap selama kapal diproses di pelabuhan
 - runner mewajibkan FCFS dan hasil CAOA sama-sama feasible sebelum output dianggap valid
 - debug report voyage dibangun langsung dari schedule final dan `T_j`
 
