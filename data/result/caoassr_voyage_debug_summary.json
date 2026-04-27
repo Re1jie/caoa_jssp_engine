@@ -3,8 +3,8 @@
     "late_voyage_count": 21,
     "on_time_voyage_count": 46,
     "total_due_window_hours": 26160.0,
-    "total_tardiness_hours": 3581.0,
+    "total_tardiness_hours": 3575.0,
     "max_tardiness_hours": 1229.0,
-    "avg_tardiness_hours": 53.44776119402985,
+    "avg_tardiness_hours": 53.35820895522388,
     "max_earliness_hours": 359.0
 }
