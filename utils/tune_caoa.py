@@ -9,15 +9,15 @@ import numpy as np
 import optuna
 
 from engine.caoa import CAOA
-from engine.decoder import ActiveScheduleDecoder
+from engine.decoder_insertion import ActiveScheduleDecoder
 from engine.tidal_checker import TidalChecker
 from utils.data_loader import load_real_jssp_data
 
 
-MAX_FES = 2500
+MAX_FES = 5000
 MAX_ITER = 5000
 N_TRIALS = 200
-N_REPEATS = 3
+N_REPEATS = 5
 TIMEOUT = 28800
 
 BASE_SEED = 20260421
