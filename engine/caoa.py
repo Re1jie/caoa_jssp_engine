@@ -31,6 +31,7 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.3, beta=0.1, gamma=0.1, delta=1
     start_total = time.perf_counter()
     for t in range(max_iter):
         iter_start = time.perf_counter()
+        solution_reset_count = 0
         depleted_count = 0
 
         if max_FEs is not None and fe_counter >= max_FEs:
@@ -65,6 +66,7 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.3, beta=0.1, gamma=0.1, delta=1
             # Waktu Serangan / Adaptasi jika solusi memburuk tajam (Persamaan 7 & 8)
             if abs(new_fit - old_fit) > delta and new_fit > old_fit:
                 if max_FEs is None or fe_counter < max_FEs:
+                    solution_reset_count += 1
                     new_pos = lb + (ub - lb) * np.random.rand(dim)
                     new_pos = np.clip(new_pos, lb, ub)
                     new_fit = fobj(new_pos)
@@ -108,7 +110,8 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.3, beta=0.1, gamma=0.1, delta=1
                 f"gBest: {gBestScore:.2f} | "
                 f"Rata-rata: {np.mean(fitness):.2f} | "
                 f"FEs: {fe_counter} | "
-                f"Energy depleted: {depleted_count} | "
+                f"Reset (Solution): {solution_reset_count} | "
+                f"Reset (Energy): {depleted_count} | "
                 f"Iter time: {iter_time:.4f}s | "
                 f"Total time: {total_time:.2f}s"
             )

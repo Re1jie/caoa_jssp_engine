@@ -260,35 +260,70 @@ def should_activate_ssr(
     return fitness_plateau and structural_stagnation
 
 
-def _evaluate_candidate(x, fobj=None, decoder=None):
+def _evaluate_candidate(x, fobj=None, decoder=None, build_signatures=False):
     if decoder is not None:
         schedule_df, metrics = decoder.decode_from_continuous(x)
         metrics = dict(metrics) if metrics is not None else {}
         if "is_feasible" not in metrics:
             metrics["is_feasible"] = metrics.get("infeasible_reason") in (None, "", False)
+        decoded_signature = None
+        machine_order_signature = None
+        ranking_signature = None
+        if build_signatures:
+            decoded_signature = _schedule_signature_from_dataframe(schedule_df)
+            machine_order_signature = compute_machine_order_signature(schedule_df)
+            ranking_signature = _compute_ranking_signature(x)
         return {
             "fitness": float(metrics["total_tardiness"]),
             "schedule_df": schedule_df,
             "metrics": metrics,
-            "decoded_signature": _schedule_signature_from_dataframe(schedule_df),
-            "machine_order_signature": compute_machine_order_signature(schedule_df),
-            "ranking_signature": _compute_ranking_signature(x),
+            "decoded_signature": decoded_signature,
+            "machine_order_signature": machine_order_signature,
+            "ranking_signature": ranking_signature,
+            "op_priority": None,
         }
 
     if fobj is None:
         raise ValueError("Either `fobj` or `decoder` must be provided.")
 
+    ranking_signature = _compute_ranking_signature(x) if build_signatures else None
     return {
         "fitness": float(fobj(x)),
         "schedule_df": None,
         "metrics": None,
         "decoded_signature": None,
         "machine_order_signature": None,
-        "ranking_signature": _compute_ranking_signature(x),
+        "ranking_signature": ranking_signature,
+        "op_priority": None,
     }
 
 
-def _update_elite_archive(elite_archive, pos, fitness, decoded_signatures, archive_signatures, elite_size):
+def _build_evaluation_metadata(evaluation, position):
+    schedule_df = evaluation.get("schedule_df")
+    if evaluation.get("decoded_signature") is None:
+        evaluation["decoded_signature"] = _schedule_signature_from_dataframe(schedule_df)
+    if evaluation.get("machine_order_signature") is None:
+        evaluation["machine_order_signature"] = compute_machine_order_signature(schedule_df)
+    if evaluation.get("ranking_signature") is None:
+        evaluation["ranking_signature"] = _compute_ranking_signature(position)
+    if evaluation.get("op_priority") is None:
+        evaluation["op_priority"] = _extract_operation_priority_from_schedule(schedule_df)
+    return evaluation
+
+
+def _refresh_population_metadata(pos, evaluations):
+    decoded_signatures = []
+    machine_order_signatures = []
+    ranking_signatures = []
+    for idx, evaluation in enumerate(evaluations):
+        _build_evaluation_metadata(evaluation, pos[idx])
+        decoded_signatures.append(evaluation["decoded_signature"])
+        machine_order_signatures.append(evaluation["machine_order_signature"])
+        ranking_signatures.append(evaluation["ranking_signature"])
+    return decoded_signatures, machine_order_signatures, ranking_signatures
+
+
+def _update_elite_archive(elite_archive, pos, fitness, evaluations, archive_signatures, elite_size):
     merged = {}
     for item in elite_archive:
         key = item.get("archive_signature", item.get("decoded_signature"))
@@ -298,15 +333,20 @@ def _update_elite_archive(elite_archive, pos, fitness, decoded_signatures, archi
                 "position": item["position"].copy(),
                 "fitness": float(item["fitness"]),
                 "decoded_signature": item.get("decoded_signature"),
+                "op_priority": item.get("op_priority"),
+                "is_feasible": bool(item.get("is_feasible", True)),
                 "archive_signature": key,
             }
 
     for idx in np.argsort(fitness):
         key = archive_signatures[idx]
+        metrics = evaluations[idx].get("metrics")
         candidate = {
             "position": pos[idx].copy(),
             "fitness": float(fitness[idx]),
-            "decoded_signature": decoded_signatures[idx],
+            "decoded_signature": evaluations[idx].get("decoded_signature"),
+            "op_priority": evaluations[idx].get("op_priority"),
+            "is_feasible": _is_feasible_metrics(metrics, missing_feasibility_is_feasible=True),
             "archive_signature": key,
         }
         best_existing = merged.get(key)
@@ -436,11 +476,10 @@ def _build_operation_priority_knowledge_from_archive(
     sample_counts = {operation: 0 for operation in operation_reference}
 
     for item in elite_archive:
-        schedule_df, metrics = decoder.decode_from_continuous(item["position"])
-        if metrics is not None and "is_feasible" in metrics and not bool(metrics["is_feasible"]):
+        if not bool(item.get("is_feasible", True)):
             continue
 
-        op_priority = _extract_operation_priority_from_schedule(schedule_df)
+        op_priority = item.get("op_priority")
         if not op_priority:
             continue
 
@@ -596,10 +635,12 @@ def CAOA_SSR(
     decoded_signatures = [None] * N
     machine_order_signatures = [None] * N
     ranking_signatures = [None] * N
+    evaluations = [None] * N
 
     fe_counter = 0
     for i in range(N):
         evaluation = _evaluate_candidate(pos[i], fobj=fobj, decoder=decoder)
+        evaluations[i] = evaluation
         fitness[i] = evaluation["fitness"]
         schedule_dfs[i] = evaluation["schedule_df"]
         metrics_list[i] = evaluation["metrics"]
@@ -632,14 +673,12 @@ def CAOA_SSR(
     ssr_elite_k = elite_size if ssr_elite_k is None else int(ssr_elite_k)
 
     cached_check_metrics = {
-        "unique_ranking_count": int(len(set(ranking_signatures))),
-        "unique_schedule_count": int(len(set(sig for sig in decoded_signatures if sig is not None))),
+        "unique_ranking_count": 0,
+        "unique_schedule_count": 0,
         "unique_machine_family_count": 0,
         "avg_machine_order_distance": 0.0,
         "avg_ranking_distance": 0.0,
-        "dup_ratio_to_gbest": float(
-            sum(sig == gBestDecodedSignature for sig in decoded_signatures) / max(1, N)
-        ),
+        "dup_ratio_to_gbest": 0.0,
         "feasible_count": int(
             sum(
                 _is_feasible_metrics(
@@ -719,10 +758,12 @@ def CAOA_SSR(
                         "decoded_signature": decoded_signatures[i],
                         "machine_order_signature": machine_order_signatures[i],
                         "ranking_signature": ranking_signatures[i],
+                        "op_priority": evaluations[i].get("op_priority") if evaluations[i] else None,
                     }
 
             pos[i] = new_pos
             fitness[i] = new_fit
+            evaluations[i] = evaluation
             schedule_dfs[i] = evaluation["schedule_df"]
             metrics_list[i] = evaluation["metrics"]
             decoded_signatures[i] = evaluation["decoded_signature"]
@@ -737,6 +778,7 @@ def CAOA_SSR(
                     pos[i] = _plain_random_position(lb, ub)
                     energies[i] = initial_energy
                     evaluation = _evaluate_candidate(pos[i], fobj=fobj, decoder=decoder)
+                    evaluations[i] = evaluation
                     fitness[i] = evaluation["fitness"]
                     schedule_dfs[i] = evaluation["schedule_df"]
                     metrics_list[i] = evaluation["metrics"]
@@ -752,18 +794,6 @@ def CAOA_SSR(
             gBest = pos[best_idx].copy()
             gBestDecodedSignature = decoded_signatures[best_idx]
 
-        archive_signatures = [
-            machine_sig if machine_sig is not None else decoded_sig
-            for machine_sig, decoded_sig in zip(machine_order_signatures, decoded_signatures)
-        ]
-        elite_archive = _update_elite_archive(
-            elite_archive,
-            pos,
-            fitness,
-            decoded_signatures,
-            archive_signatures,
-            elite_size,
-        )
         stagnation_details = {
             "improvement_window": None,
             "fitness_plateau": False,
@@ -778,6 +808,24 @@ def CAOA_SSR(
         }
 
         if check_this_iter:
+            decoded_signatures, machine_order_signatures, ranking_signatures = _refresh_population_metadata(
+                pos,
+                evaluations,
+            )
+            gBestDecodedSignature = decoded_signatures[best_idx]
+            archive_signatures = [
+                machine_sig if machine_sig is not None else decoded_sig
+                for machine_sig, decoded_sig in zip(machine_order_signatures, decoded_signatures)
+            ]
+            elite_archive = _update_elite_archive(
+                elite_archive,
+                pos,
+                fitness,
+                evaluations,
+                archive_signatures,
+                elite_size,
+            )
+
             best_score_history.append({"iter": t + 1, "score": float(gBestScore)})
             best_decoded_signature_history.append({"iter": t + 1, "signature": gBestDecodedSignature})
             best_structural_signature_history.append(
@@ -959,6 +1007,7 @@ def CAOA_SSR(
 
                     pos[idx] = best_candidate_pos
                     evaluation = best_candidate_evaluation
+                    _build_evaluation_metadata(evaluation, pos[idx])
                     if priority_knowledge is not None:
                         knowledge_replacement_count += 1
                     else:
@@ -966,6 +1015,7 @@ def CAOA_SSR(
 
                     energies[idx] = initial_energy
                     fitness[idx] = evaluation["fitness"]
+                    evaluations[idx] = evaluation
                     schedule_dfs[idx] = evaluation["schedule_df"]
                     metrics_list[idx] = evaluation["metrics"]
                     decoded_signatures[idx] = evaluation["decoded_signature"]
@@ -987,7 +1037,7 @@ def CAOA_SSR(
                     elite_archive,
                     pos,
                     fitness,
-                    decoded_signatures,
+                    evaluations,
                     archive_signatures,
                     elite_size,
                 )
