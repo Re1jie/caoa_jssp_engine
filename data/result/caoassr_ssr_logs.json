@@ -2,6 +2,7 @@
     {
         "iter": 1,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -60,12 +61,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 22,
-        "iter_time_sec": 0.467443721001473,
-        "total_time_sec": 0.4674446539975179
+        "iter_time_sec": 0.4574426620019949,
+        "total_time_sec": 0.4574437619994569
     },
     {
         "iter": 2,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -124,12 +126,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 38,
-        "iter_time_sec": 0.6183831519992964,
-        "total_time_sec": 1.085896757998853
+        "iter_time_sec": 0.6492233620010666,
+        "total_time_sec": 1.1067315820000658
     },
     {
         "iter": 3,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -188,12 +191,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 48,
-        "iter_time_sec": 0.4131619629988563,
-        "total_time_sec": 1.4991271719991346
+        "iter_time_sec": 0.39170695999928284,
+        "total_time_sec": 1.4985071070004778
     },
     {
         "iter": 4,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -252,12 +256,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 58,
-        "iter_time_sec": 0.39064665099795093,
-        "total_time_sec": 1.8898463289988285
+        "iter_time_sec": 0.39433319400268374,
+        "total_time_sec": 1.8929003849989385
     },
     {
         "iter": 5,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -316,12 +321,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 71,
-        "iter_time_sec": 0.5090655219973996,
-        "total_time_sec": 2.398988233999262
+        "iter_time_sec": 0.5159439140006725,
+        "total_time_sec": 2.408908318997419
     },
     {
         "iter": 6,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -380,12 +386,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 83,
-        "iter_time_sec": 0.4739190079999389,
-        "total_time_sec": 2.872975938997115
+        "iter_time_sec": 0.47341025799687486,
+        "total_time_sec": 2.8823798449993774
     },
     {
         "iter": 7,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -444,12 +451,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 94,
-        "iter_time_sec": 0.45061507300124504,
-        "total_time_sec": 3.323657621996972
+        "iter_time_sec": 0.4428990630003682,
+        "total_time_sec": 3.325338014998124
     },
     {
         "iter": 8,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -508,12 +516,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 104,
-        "iter_time_sec": 0.39414111099904403,
-        "total_time_sec": 3.717874149999261
+        "iter_time_sec": 0.4094035950001853,
+        "total_time_sec": 3.7348038380005164
     },
     {
         "iter": 9,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -572,12 +581,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 121,
-        "iter_time_sec": 0.6860404099970765,
-        "total_time_sec": 4.403998615998717
+        "iter_time_sec": 0.6861331129985047,
+        "total_time_sec": 4.421000623999134
     },
     {
         "iter": 10,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -596,9 +606,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -636,12 +646,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 134,
-        "iter_time_sec": 1.230128245002561,
-        "total_time_sec": 5.634195210997859
+        "iter_time_sec": 1.2698694669998076,
+        "total_time_sec": 5.6909358329976385
     },
     {
         "iter": 11,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -700,12 +711,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 148,
-        "iter_time_sec": 0.5730563789984444,
-        "total_time_sec": 6.207318814998871
+        "iter_time_sec": 0.5879472340020584,
+        "total_time_sec": 6.278961555999558
     },
     {
         "iter": 12,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -764,12 +776,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 157,
-        "iter_time_sec": 0.34530511800039676,
-        "total_time_sec": 6.552693726000143
+        "iter_time_sec": 0.4005510940005479,
+        "total_time_sec": 6.679585341000347
     },
     {
         "iter": 13,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -828,12 +841,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 167,
-        "iter_time_sec": 0.38854201400317834,
-        "total_time_sec": 6.941304694999417
+        "iter_time_sec": 0.4037699540022004,
+        "total_time_sec": 7.083427105000737
     },
     {
         "iter": 14,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -892,12 +906,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 179,
-        "iter_time_sec": 0.4732825060018513,
-        "total_time_sec": 7.4146679249970475
+        "iter_time_sec": 0.47380583000267507,
+        "total_time_sec": 7.5573023500001
     },
     {
         "iter": 15,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -956,12 +971,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 193,
-        "iter_time_sec": 0.5566680269985227,
-        "total_time_sec": 7.971403098999872
+        "iter_time_sec": 0.5694485999993049,
+        "total_time_sec": 8.12681550599882
     },
     {
         "iter": 16,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1020,12 +1036,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 202,
-        "iter_time_sec": 0.3347701339989726,
-        "total_time_sec": 8.306249369998113
+        "iter_time_sec": 0.3971432559992536,
+        "total_time_sec": 8.524027912997553
     },
     {
         "iter": 17,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1084,12 +1101,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 213,
-        "iter_time_sec": 0.42393158200138714,
-        "total_time_sec": 8.730256969996844
+        "iter_time_sec": 0.5619425769982627,
+        "total_time_sec": 9.086091354998644
     },
     {
         "iter": 18,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1148,12 +1166,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 222,
-        "iter_time_sec": 0.339297553000506,
-        "total_time_sec": 9.069633739996789
+        "iter_time_sec": 0.461887604000367,
+        "total_time_sec": 9.548063517999253
     },
     {
         "iter": 19,
         "best_fitness": 3634.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1212,14 +1231,15 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 236,
-        "iter_time_sec": 0.5329367220001586,
-        "total_time_sec": 9.602651856999728
+        "iter_time_sec": 0.6295323339982133,
+        "total_time_sec": 10.177665541999886
     },
     {
         "iter": 20,
         "best_fitness": 3613.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 21.0,
+        "improvement_window": null,
         "fitness_plateau": false,
         "plateau_check_streak": 0,
         "unique_ranking_count": 10,
@@ -1236,9 +1256,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -1276,12 +1296,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 247,
-        "iter_time_sec": 1.124002810996899,
-        "total_time_sec": 10.7267244379982
+        "iter_time_sec": 1.2408540280011948,
+        "total_time_sec": 11.418626881000819
     },
     {
         "iter": 21,
         "best_fitness": 3603.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1340,12 +1361,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 258,
-        "iter_time_sec": 0.4351364599970111,
-        "total_time_sec": 11.161936740998499
+        "iter_time_sec": 0.43377051499919617,
+        "total_time_sec": 11.852472431000933
     },
     {
         "iter": 22,
         "best_fitness": 3603.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1404,12 +1426,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 267,
-        "iter_time_sec": 0.3335900349993608,
-        "total_time_sec": 11.495609408997552
+        "iter_time_sec": 0.33481199000016204,
+        "total_time_sec": 12.187349059000553
     },
     {
         "iter": 23,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1468,12 +1491,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 277,
-        "iter_time_sec": 0.37348791399926995,
-        "total_time_sec": 11.869165685999178
+        "iter_time_sec": 0.3854330670001218,
+        "total_time_sec": 12.572856348000641
     },
     {
         "iter": 24,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1532,12 +1556,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 288,
-        "iter_time_sec": 0.42628685500312713,
-        "total_time_sec": 12.295518300998083
+        "iter_time_sec": 0.4030541889987944,
+        "total_time_sec": 12.975980106999486
     },
     {
         "iter": 25,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1596,12 +1621,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 298,
-        "iter_time_sec": 0.37372319199857884,
-        "total_time_sec": 12.669309633998637
+        "iter_time_sec": 0.4018456609992427,
+        "total_time_sec": 13.377888923998398
     },
     {
         "iter": 26,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1660,12 +1686,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 312,
-        "iter_time_sec": 0.5246118790018954,
-        "total_time_sec": 13.193989201998193
+        "iter_time_sec": 0.5124615369968524,
+        "total_time_sec": 13.890412706998177
     },
     {
         "iter": 27,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1724,12 +1751,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 324,
-        "iter_time_sec": 0.4661482840019744,
-        "total_time_sec": 13.660206486998504
+        "iter_time_sec": 0.45162694199825637,
+        "total_time_sec": 14.342101911999634
     },
     {
         "iter": 28,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1788,12 +1816,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 333,
-        "iter_time_sec": 0.323629948998132,
-        "total_time_sec": 13.983903612999711
+        "iter_time_sec": 0.3335829019997618,
+        "total_time_sec": 14.675748336998367
     },
     {
         "iter": 29,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1852,14 +1881,15 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 347,
-        "iter_time_sec": 0.526510634997976,
-        "total_time_sec": 14.510479949996807
+        "iter_time_sec": 0.5365594950017112,
+        "total_time_sec": 15.212369761000446
     },
     {
         "iter": 30,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 13.0,
+        "improvement_window": null,
         "fitness_plateau": false,
         "plateau_check_streak": 0,
         "unique_ranking_count": 10,
@@ -1876,9 +1906,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -1916,12 +1946,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 358,
-        "iter_time_sec": 1.1078823569987435,
-        "total_time_sec": 15.61842779699873
+        "iter_time_sec": 1.097091856001498,
+        "total_time_sec": 16.309539125999436
     },
     {
         "iter": 31,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -1980,12 +2011,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 366,
-        "iter_time_sec": 0.297373408000567,
-        "total_time_sec": 15.915873285997804
+        "iter_time_sec": 0.32599957099955645,
+        "total_time_sec": 16.63561158000084
     },
     {
         "iter": 32,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2044,12 +2076,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 377,
-        "iter_time_sec": 0.4020502520033915,
-        "total_time_sec": 16.317991751999216
+        "iter_time_sec": 0.3998286049973103,
+        "total_time_sec": 17.035502545997588
     },
     {
         "iter": 33,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2108,12 +2141,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 390,
-        "iter_time_sec": 0.497388237999985,
-        "total_time_sec": 16.81544637600018
+        "iter_time_sec": 0.48896511099883355,
+        "total_time_sec": 17.524537722998502
     },
     {
         "iter": 34,
         "best_fitness": 3600.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2172,12 +2206,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 401,
-        "iter_time_sec": 0.4129550809993816,
-        "total_time_sec": 17.22846895099792
+        "iter_time_sec": 0.41997831399930874,
+        "total_time_sec": 17.944588890997693
     },
     {
         "iter": 35,
         "best_fitness": 3594.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2236,12 +2271,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 411,
-        "iter_time_sec": 0.3746977109985892,
-        "total_time_sec": 17.603236327999184
+        "iter_time_sec": 0.36944197500270093,
+        "total_time_sec": 18.314097760998266
     },
     {
         "iter": 36,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2300,12 +2336,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 422,
-        "iter_time_sec": 0.42822204000185593,
-        "total_time_sec": 18.03152568799851
+        "iter_time_sec": 0.4572204790019896,
+        "total_time_sec": 18.7713958739987
     },
     {
         "iter": 37,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2364,12 +2401,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 436,
-        "iter_time_sec": 0.5280063700010942,
-        "total_time_sec": 18.559601466997265
+        "iter_time_sec": 0.550234698002896,
+        "total_time_sec": 19.321700299999065
     },
     {
         "iter": 38,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2428,12 +2466,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 455,
-        "iter_time_sec": 0.7494364480007789,
-        "total_time_sec": 19.309105026997713
+        "iter_time_sec": 0.741918206000264,
+        "total_time_sec": 20.063683878997836
     },
     {
         "iter": 39,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2492,14 +2531,15 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 465,
-        "iter_time_sec": 0.3871085179998772,
-        "total_time_sec": 19.696301226998912
+        "iter_time_sec": 0.3897654859974864,
+        "total_time_sec": 20.453512560998206
     },
     {
         "iter": 40,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 7.0,
+        "improvement_window": 41.0,
         "fitness_plateau": false,
         "plateau_check_streak": 0,
         "unique_ranking_count": 10,
@@ -2516,9 +2556,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -2556,12 +2596,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 477,
-        "iter_time_sec": 1.1608532439968258,
-        "total_time_sec": 20.85722232199987
+        "iter_time_sec": 1.1413594330006163,
+        "total_time_sec": 21.594937961999676
     },
     {
         "iter": 41,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2620,12 +2661,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 487,
-        "iter_time_sec": 0.40061564999996335,
-        "total_time_sec": 21.257914912999695
+        "iter_time_sec": 0.44567991299845744,
+        "total_time_sec": 22.040769454997644
     },
     {
         "iter": 42,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2684,12 +2726,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 504,
-        "iter_time_sec": 0.6324693690003187,
-        "total_time_sec": 21.89045336900017
+        "iter_time_sec": 0.676819890999468,
+        "total_time_sec": 22.71767570999873
     },
     {
         "iter": 43,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2748,12 +2791,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 516,
-        "iter_time_sec": 0.4461288179991243,
-        "total_time_sec": 22.336650833996828
+        "iter_time_sec": 0.4555045749984856,
+        "total_time_sec": 23.173244023000734
     },
     {
         "iter": 44,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2812,12 +2856,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 528,
-        "iter_time_sec": 0.4598690249986248,
-        "total_time_sec": 22.796587224998802
+        "iter_time_sec": 0.4594815150012437,
+        "total_time_sec": 23.632796396999765
     },
     {
         "iter": 45,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2876,12 +2921,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 536,
-        "iter_time_sec": 0.29536478799855104,
-        "total_time_sec": 23.092021114996896
+        "iter_time_sec": 0.3119034119990829,
+        "total_time_sec": 23.944764379000844
     },
     {
         "iter": 46,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -2940,12 +2986,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 549,
-        "iter_time_sec": 0.5011318519973429,
-        "total_time_sec": 23.59322399099983
+        "iter_time_sec": 0.5187390920000325,
+        "total_time_sec": 24.46356736799862
     },
     {
         "iter": 47,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3004,12 +3051,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 562,
-        "iter_time_sec": 0.49420521699721576,
-        "total_time_sec": 24.08750015899932
+        "iter_time_sec": 0.5018228829976579,
+        "total_time_sec": 24.965459620998445
     },
     {
         "iter": 48,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3068,12 +3116,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 571,
-        "iter_time_sec": 0.33361670000158483,
-        "total_time_sec": 24.421191123998142
+        "iter_time_sec": 0.33555104700280936,
+        "total_time_sec": 25.30107719899752
     },
     {
         "iter": 49,
         "best_fitness": 3593.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3132,14 +3181,15 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 588,
-        "iter_time_sec": 0.6242037590018299,
-        "total_time_sec": 25.045465346996934
+        "iter_time_sec": 0.6465045439981623,
+        "total_time_sec": 25.947644117997697
     },
     {
         "iter": 50,
         "best_fitness": 3592.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 1.0,
+        "improvement_window": 21.0,
         "fitness_plateau": false,
         "plateau_check_streak": 0,
         "unique_ranking_count": 10,
@@ -3156,9 +3206,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -3196,12 +3246,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 600,
-        "iter_time_sec": 1.1603159929982212,
-        "total_time_sec": 26.205848436999077
+        "iter_time_sec": 1.1667267390002962,
+        "total_time_sec": 27.114435268998932
     },
     {
         "iter": 51,
         "best_fitness": 3592.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3260,12 +3311,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 610,
-        "iter_time_sec": 0.3761917550000362,
-        "total_time_sec": 26.582126664998214
+        "iter_time_sec": 0.3703022059999057,
+        "total_time_sec": 27.48480655000094
     },
     {
         "iter": 52,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3324,12 +3376,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 619,
-        "iter_time_sec": 0.3425675399994361,
-        "total_time_sec": 26.92476391799937
+        "iter_time_sec": 0.33278050499939127,
+        "total_time_sec": 27.817657064999366
     },
     {
         "iter": 53,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3388,12 +3441,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 631,
-        "iter_time_sec": 0.44641206699816394,
-        "total_time_sec": 27.371247874998517
+        "iter_time_sec": 0.47010600499925204,
+        "total_time_sec": 28.287827485997695
     },
     {
         "iter": 54,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3452,12 +3506,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 641,
-        "iter_time_sec": 0.3790614319987071,
-        "total_time_sec": 27.750390330998925
+        "iter_time_sec": 0.3674367719977454,
+        "total_time_sec": 28.655328804998135
     },
     {
         "iter": 55,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3516,12 +3571,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 653,
-        "iter_time_sec": 0.44709200599754695,
-        "total_time_sec": 28.197549696997157
+        "iter_time_sec": 0.4487165840000671,
+        "total_time_sec": 29.104118638999353
     },
     {
         "iter": 56,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3580,12 +3636,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 666,
-        "iter_time_sec": 0.4814811809992534,
-        "total_time_sec": 28.6790998189972
+        "iter_time_sec": 0.5085502570000244,
+        "total_time_sec": 29.612732508998306
     },
     {
         "iter": 57,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3644,12 +3701,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 675,
-        "iter_time_sec": 0.33496419100265484,
-        "total_time_sec": 29.01413055899684
+        "iter_time_sec": 0.34485133300040616,
+        "total_time_sec": 29.95764889599741
     },
     {
         "iter": 58,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3708,12 +3766,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 689,
-        "iter_time_sec": 0.5280547719994502,
-        "total_time_sec": 29.54225386199687
+        "iter_time_sec": 0.5265249850017426,
+        "total_time_sec": 30.484254162998695
     },
     {
         "iter": 59,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3772,14 +3831,15 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 704,
-        "iter_time_sec": 0.6118265109980712,
-        "total_time_sec": 30.154146225999284
+        "iter_time_sec": 0.5791983599992818,
+        "total_time_sec": 31.06351784599974
     },
     {
         "iter": 60,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 4.0,
+        "improvement_window": 12.0,
         "fitness_plateau": false,
         "plateau_check_streak": 0,
         "unique_ranking_count": 10,
@@ -3796,9 +3856,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -3836,12 +3896,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 713,
-        "iter_time_sec": 1.0473818489990663,
-        "total_time_sec": 31.201612072996795
+        "iter_time_sec": 1.0471016800001962,
+        "total_time_sec": 32.11068220800007
     },
     {
         "iter": 61,
         "best_fitness": 3588.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3900,12 +3961,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 726,
-        "iter_time_sec": 0.516427433998615,
-        "total_time_sec": 31.718111990998295
+        "iter_time_sec": 0.5196700429987686,
+        "total_time_sec": 32.630423917998996
     },
     {
         "iter": 62,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -3964,12 +4026,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 736,
-        "iter_time_sec": 0.3907454920008604,
-        "total_time_sec": 32.1089567659983
+        "iter_time_sec": 0.37817555099900346,
+        "total_time_sec": 33.00866221799879
     },
     {
         "iter": 63,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4028,12 +4091,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 745,
-        "iter_time_sec": 0.3372865970013663,
-        "total_time_sec": 32.44631020699671
+        "iter_time_sec": 0.3453865820010833,
+        "total_time_sec": 33.35411334699893
     },
     {
         "iter": 64,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4092,12 +4156,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 757,
-        "iter_time_sec": 0.4783243300007598,
-        "total_time_sec": 32.9247030109982
+        "iter_time_sec": 0.46392240400018636,
+        "total_time_sec": 33.81810241700077
     },
     {
         "iter": 65,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4156,12 +4221,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 773,
-        "iter_time_sec": 0.601148154000839,
-        "total_time_sec": 33.525916684997355
+        "iter_time_sec": 0.6379706660009106,
+        "total_time_sec": 34.45613799399871
     },
     {
         "iter": 66,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4220,12 +4286,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 784,
-        "iter_time_sec": 0.4072094789989933,
-        "total_time_sec": 33.93319262299701
+        "iter_time_sec": 0.41691324900239124,
+        "total_time_sec": 34.873126897000475
     },
     {
         "iter": 67,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4284,12 +4351,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 796,
-        "iter_time_sec": 0.4808366520010168,
-        "total_time_sec": 34.41409448699778
+        "iter_time_sec": 0.48480964000191307,
+        "total_time_sec": 35.358002002998546
     },
     {
         "iter": 68,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4348,12 +4416,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 810,
-        "iter_time_sec": 0.527135738000652,
-        "total_time_sec": 34.94130643899916
+        "iter_time_sec": 0.5524437450003461,
+        "total_time_sec": 35.91050892400017
     },
     {
         "iter": 69,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4412,14 +4481,15 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 820,
-        "iter_time_sec": 0.36826856399784447,
-        "total_time_sec": 35.309644442997524
+        "iter_time_sec": 0.39136065200000303,
+        "total_time_sec": 36.301931254998635
     },
     {
         "iter": 70,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 6.0,
+        "improvement_window": 11.0,
         "fitness_plateau": false,
         "plateau_check_streak": 0,
         "unique_ranking_count": 10,
@@ -4436,9 +4506,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -4476,12 +4546,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 830,
-        "iter_time_sec": 1.0761151339975186,
-        "total_time_sec": 36.38583891899907
+        "iter_time_sec": 1.0966616779987817,
+        "total_time_sec": 37.39866878799876
     },
     {
         "iter": 71,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4540,12 +4611,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 842,
-        "iter_time_sec": 0.45929403199988883,
-        "total_time_sec": 36.845205617999454
+        "iter_time_sec": 0.5111876369992387,
+        "total_time_sec": 37.90993148900088
     },
     {
         "iter": 72,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4604,12 +4676,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 858,
-        "iter_time_sec": 0.6281562610020046,
-        "total_time_sec": 37.473428767996666
+        "iter_time_sec": 0.6033637969994743,
+        "total_time_sec": 38.51335906999884
     },
     {
         "iter": 73,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4668,12 +4741,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 870,
-        "iter_time_sec": 0.4500308180031425,
-        "total_time_sec": 37.92353004799952
+        "iter_time_sec": 0.4909756860033667,
+        "total_time_sec": 39.004402212998684
     },
     {
         "iter": 74,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4732,12 +4806,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 879,
-        "iter_time_sec": 0.34361924000040744,
-        "total_time_sec": 38.267360189998726
+        "iter_time_sec": 0.33382948900180054,
+        "total_time_sec": 39.33829815900026
     },
     {
         "iter": 75,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4796,12 +4871,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 895,
-        "iter_time_sec": 0.6005816070028231,
-        "total_time_sec": 38.86802223599807
+        "iter_time_sec": 0.6083683030010434,
+        "total_time_sec": 39.94672958500087
     },
     {
         "iter": 76,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4860,12 +4936,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 905,
-        "iter_time_sec": 0.4000579960011237,
-        "total_time_sec": 39.26814677599759
+        "iter_time_sec": 0.37309058000028017,
+        "total_time_sec": 40.319882808998955
     },
     {
         "iter": 77,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4924,12 +5001,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 914,
-        "iter_time_sec": 0.3486490329996741,
-        "total_time_sec": 39.61686840299808
+        "iter_time_sec": 0.3482262580000679,
+        "total_time_sec": 40.66817265899954
     },
     {
         "iter": 78,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -4988,12 +5066,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 927,
-        "iter_time_sec": 0.48857893900276395,
-        "total_time_sec": 40.1055164879981
+        "iter_time_sec": 0.48973087999911513,
+        "total_time_sec": 41.15796624699942
     },
     {
         "iter": 79,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -5052,16 +5131,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 938,
-        "iter_time_sec": 0.4292392679999466,
-        "total_time_sec": 40.534823561996745
+        "iter_time_sec": 0.4090591569984099,
+        "total_time_sec": 41.56709178999881
     },
     {
         "iter": 80,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 0.0,
-        "fitness_plateau": true,
-        "plateau_check_streak": 1,
+        "improvement_window": 10.0,
+        "fitness_plateau": false,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5075,10 +5155,10 @@
         "schedule_collapse": false,
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
-        "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "stagnation_score": 0.2,
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -5116,16 +5196,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 950,
-        "iter_time_sec": 1.2362564150025719,
-        "total_time_sec": 41.77114719599922
+        "iter_time_sec": 1.1595699690005858,
+        "total_time_sec": 42.72672689399769
     },
     {
         "iter": 81,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5180,16 +5261,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 966,
-        "iter_time_sec": 0.6739984899977571,
-        "total_time_sec": 42.445244770999125
+        "iter_time_sec": 0.5864449679975223,
+        "total_time_sec": 43.31324104899977
     },
     {
         "iter": 82,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5244,16 +5326,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 974,
-        "iter_time_sec": 0.28883910500007914,
-        "total_time_sec": 42.73415243499767
+        "iter_time_sec": 0.29678812800193555,
+        "total_time_sec": 43.61009317099888
     },
     {
         "iter": 83,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5308,16 +5391,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 985,
-        "iter_time_sec": 0.4075643360010872,
-        "total_time_sec": 43.14179659599904
+        "iter_time_sec": 0.41095413899893174,
+        "total_time_sec": 44.021109380999405
     },
     {
         "iter": 84,
         "best_fitness": 3582.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5372,16 +5456,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 996,
-        "iter_time_sec": 0.42264148400136037,
-        "total_time_sec": 43.56450438199681
+        "iter_time_sec": 0.3997981989996333,
+        "total_time_sec": 44.42097102799744
     },
     {
         "iter": 85,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5436,16 +5521,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1007,
-        "iter_time_sec": 0.4079515969970089,
-        "total_time_sec": 43.97252322199711
+        "iter_time_sec": 0.4017827040006523,
+        "total_time_sec": 44.82281618200068
     },
     {
         "iter": 86,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5500,16 +5586,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1018,
-        "iter_time_sec": 0.47844777299906127,
-        "total_time_sec": 44.45106093799768
+        "iter_time_sec": 0.42253328199876705,
+        "total_time_sec": 45.24541352199958
     },
     {
         "iter": 87,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5564,16 +5651,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1032,
-        "iter_time_sec": 0.5562451620025968,
-        "total_time_sec": 45.0073797139994
+        "iter_time_sec": 0.52371515899722,
+        "total_time_sec": 45.76919672999793
     },
     {
         "iter": 88,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5628,16 +5716,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1044,
-        "iter_time_sec": 0.4958964899997227,
-        "total_time_sec": 45.50334997799655
+        "iter_time_sec": 0.4597979739992297,
+        "total_time_sec": 46.22907245799797
     },
     {
         "iter": 89,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -5692,14 +5781,15 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1052,
-        "iter_time_sec": 0.29478774100061855,
-        "total_time_sec": 45.79820750699946
+        "iter_time_sec": 0.29301240899803815,
+        "total_time_sec": 46.52215929799786
     },
     {
         "iter": 90,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 1.0,
+        "improvement_window": 7.0,
         "fitness_plateau": false,
         "plateau_check_streak": 0,
         "unique_ranking_count": 10,
@@ -5716,9 +5806,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -5756,12 +5846,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1067,
-        "iter_time_sec": 1.2866365479967499,
-        "total_time_sec": 47.084913528997276
+        "iter_time_sec": 1.2481799710003543,
+        "total_time_sec": 47.77041975799875
     },
     {
         "iter": 91,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -5820,12 +5911,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1075,
-        "iter_time_sec": 0.3149568660010118,
-        "total_time_sec": 47.399944238997705
+        "iter_time_sec": 0.3135137150020455,
+        "total_time_sec": 48.08404631799931
     },
     {
         "iter": 92,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -5884,12 +5976,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1085,
-        "iter_time_sec": 0.3739716670024791,
-        "total_time_sec": 47.77398473199719
+        "iter_time_sec": 0.38615482000022894,
+        "total_time_sec": 48.47026481899957
     },
     {
         "iter": 93,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -5948,12 +6041,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1099,
-        "iter_time_sec": 0.5484208350026165,
-        "total_time_sec": 48.32248757999696
+        "iter_time_sec": 0.5250721159973182,
+        "total_time_sec": 48.995403123997676
     },
     {
         "iter": 94,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -6012,12 +6106,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1113,
-        "iter_time_sec": 0.612084665997827,
-        "total_time_sec": 48.93466123699909
+        "iter_time_sec": 0.5370227159983187,
+        "total_time_sec": 49.53249184699962
     },
     {
         "iter": 95,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -6076,12 +6171,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1121,
-        "iter_time_sec": 0.3016717640020943,
-        "total_time_sec": 49.236403454997344
+        "iter_time_sec": 0.301869432998501,
+        "total_time_sec": 49.83443264000016
     },
     {
         "iter": 96,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -6140,12 +6236,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1133,
-        "iter_time_sec": 0.4769905339999241,
-        "total_time_sec": 49.713463141997636
+        "iter_time_sec": 0.47401691199775087,
+        "total_time_sec": 50.30851611599792
     },
     {
         "iter": 97,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -6204,12 +6301,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1143,
-        "iter_time_sec": 0.375192245002836,
-        "total_time_sec": 50.08872708999843
+        "iter_time_sec": 0.3775822759998846,
+        "total_time_sec": 50.68616144199768
     },
     {
         "iter": 98,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -6268,12 +6366,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1155,
-        "iter_time_sec": 0.47711961999812047,
-        "total_time_sec": 50.56592121199719
+        "iter_time_sec": 0.4715282680008386,
+        "total_time_sec": 51.1577519579987
     },
     {
         "iter": 99,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -6332,16 +6431,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1164,
-        "iter_time_sec": 0.36511513499863213,
-        "total_time_sec": 50.93111200400017
+        "iter_time_sec": 0.3415770329993393,
+        "total_time_sec": 51.49939480800094
     },
     {
         "iter": 100,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 0.0,
-        "fitness_plateau": true,
-        "plateau_check_streak": 1,
+        "improvement_window": 1.0,
+        "fitness_plateau": false,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6355,10 +6455,10 @@
         "schedule_collapse": false,
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
-        "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "stagnation_score": 0.2,
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -6396,16 +6496,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1175,
-        "iter_time_sec": 1.1076161849996424,
-        "total_time_sec": 52.038796613996965
+        "iter_time_sec": 1.1091699989992776,
+        "total_time_sec": 52.608630570997775
     },
     {
         "iter": 101,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6460,16 +6561,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1189,
-        "iter_time_sec": 0.534547166997072,
-        "total_time_sec": 52.573419114996796
+        "iter_time_sec": 0.5317150049995689,
+        "total_time_sec": 53.14042791799875
     },
     {
         "iter": 102,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6524,16 +6626,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1201,
-        "iter_time_sec": 0.4591003850000561,
-        "total_time_sec": 53.0325842409984
+        "iter_time_sec": 0.4695715729976655,
+        "total_time_sec": 53.61006335300044
     },
     {
         "iter": 103,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6588,16 +6691,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1216,
-        "iter_time_sec": 0.5726613039987569,
-        "total_time_sec": 53.605324803997064
+        "iter_time_sec": 0.5777764919985202,
+        "total_time_sec": 54.187905422997574
     },
     {
         "iter": 104,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6652,16 +6756,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1229,
-        "iter_time_sec": 0.4979678670024441,
-        "total_time_sec": 54.10339069499969
+        "iter_time_sec": 0.5986925690012868,
+        "total_time_sec": 54.78667493899775
     },
     {
         "iter": 105,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6716,16 +6821,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1237,
-        "iter_time_sec": 0.2845483620003506,
-        "total_time_sec": 54.38800813699709
+        "iter_time_sec": 0.35765008599992143,
+        "total_time_sec": 55.14441304700085
     },
     {
         "iter": 106,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6780,16 +6886,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1250,
-        "iter_time_sec": 0.47356501999820466,
-        "total_time_sec": 54.86164086499775
+        "iter_time_sec": 0.47277570699952776,
+        "total_time_sec": 55.617259059999924
     },
     {
         "iter": 107,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6844,16 +6951,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1262,
-        "iter_time_sec": 0.4743711039991467,
-        "total_time_sec": 55.336079937998875
+        "iter_time_sec": 0.4400942229985958,
+        "total_time_sec": 56.05741699599821
     },
     {
         "iter": 108,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6908,16 +7016,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1272,
-        "iter_time_sec": 0.3685346020029101,
-        "total_time_sec": 55.70468282699949
+        "iter_time_sec": 0.39372193500094,
+        "total_time_sec": 56.45120382099776
     },
     {
         "iter": 109,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -6972,16 +7081,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1283,
-        "iter_time_sec": 0.41004888599854894,
-        "total_time_sec": 56.11480673099868
+        "iter_time_sec": 0.4120516219991259,
+        "total_time_sec": 56.863323131998186
     },
     {
         "iter": 110,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 0.0,
-        "fitness_plateau": true,
-        "plateau_check_streak": 2,
+        "improvement_window": 1.0,
+        "fitness_plateau": false,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -6995,10 +7105,10 @@
         "schedule_collapse": false,
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
-        "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "stagnation_score": 0.2,
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -7036,16 +7146,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1294,
-        "iter_time_sec": 1.1161655679970863,
-        "total_time_sec": 57.23104010199677
+        "iter_time_sec": 1.1323708849995455,
+        "total_time_sec": 57.99575855799776
     },
     {
         "iter": 111,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7100,16 +7211,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1304,
-        "iter_time_sec": 0.37801998099894263,
-        "total_time_sec": 57.609131690998765
+        "iter_time_sec": 0.3980213639988506,
+        "total_time_sec": 58.3938473019989
     },
     {
         "iter": 112,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7164,16 +7276,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1317,
-        "iter_time_sec": 0.49588257600044017,
-        "total_time_sec": 58.10508551399835
+        "iter_time_sec": 0.5135733489987615,
+        "total_time_sec": 58.90748821300076
     },
     {
         "iter": 113,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7228,16 +7341,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1328,
-        "iter_time_sec": 0.42290084499836667,
-        "total_time_sec": 58.528053233996616
+        "iter_time_sec": 0.41594825300126104,
+        "total_time_sec": 59.323504234998836
     },
     {
         "iter": 114,
         "best_fitness": 3581.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7292,16 +7406,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1337,
-        "iter_time_sec": 0.3453720500001509,
-        "total_time_sec": 58.87349330199868
+        "iter_time_sec": 0.336464176998561,
+        "total_time_sec": 59.66003117299988
     },
     {
         "iter": 115,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7356,16 +7471,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1354,
-        "iter_time_sec": 0.6532638149983541,
-        "total_time_sec": 59.526822950996575
+        "iter_time_sec": 0.6465103900009126,
+        "total_time_sec": 60.306607025999256
     },
     {
         "iter": 116,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7420,16 +7536,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1366,
-        "iter_time_sec": 0.47355055099978927,
-        "total_time_sec": 60.00044504399921
+        "iter_time_sec": 0.46133075900070253,
+        "total_time_sec": 60.76802099300039
     },
     {
         "iter": 117,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7484,16 +7601,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1376,
-        "iter_time_sec": 0.3736607489991002,
-        "total_time_sec": 60.37417733399707
+        "iter_time_sec": 0.3970938499987824,
+        "total_time_sec": 61.16517825799747
     },
     {
         "iter": 118,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7548,16 +7666,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1387,
-        "iter_time_sec": 0.4154036889995041,
-        "total_time_sec": 60.78965150099975
+        "iter_time_sec": 0.41656039699955727,
+        "total_time_sec": 61.58180410899877
     },
     {
         "iter": 119,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -7612,12 +7731,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1401,
-        "iter_time_sec": 0.5199040719999175,
-        "total_time_sec": 61.30962593499862
+        "iter_time_sec": 0.53484420300083,
+        "total_time_sec": 62.11671464999745
     },
     {
         "iter": 120,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
         "improvement_window": 3.0,
         "fitness_plateau": false,
@@ -7636,9 +7756,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -7676,12 +7796,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1411,
-        "iter_time_sec": 1.1034336789998633,
-        "total_time_sec": 62.41312621199904
+        "iter_time_sec": 1.080534071999864,
+        "total_time_sec": 63.197312960997806
     },
     {
         "iter": 121,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -7740,12 +7861,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1422,
-        "iter_time_sec": 0.4529143859981559,
-        "total_time_sec": 62.86611690599966
+        "iter_time_sec": 0.4207266370030993,
+        "total_time_sec": 63.61810884299848
     },
     {
         "iter": 122,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -7804,12 +7926,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1433,
-        "iter_time_sec": 0.41253576800227165,
-        "total_time_sec": 63.27872314299748
+        "iter_time_sec": 0.41888720800125157,
+        "total_time_sec": 64.03706225099813
     },
     {
         "iter": 123,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -7868,12 +7991,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1443,
-        "iter_time_sec": 0.3774280399993586,
-        "total_time_sec": 63.65621987299892
+        "iter_time_sec": 0.37949353200019686,
+        "total_time_sec": 64.4166223760003
     },
     {
         "iter": 124,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -7932,12 +8056,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1452,
-        "iter_time_sec": 0.3451806769990071,
-        "total_time_sec": 64.00146960499842
+        "iter_time_sec": 0.3486230260023149,
+        "total_time_sec": 64.76531008699749
     },
     {
         "iter": 125,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -7996,12 +8121,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1464,
-        "iter_time_sec": 0.47194381799999974,
-        "total_time_sec": 64.4734953469997
+        "iter_time_sec": 0.47731110699896817,
+        "total_time_sec": 65.24269396800082
     },
     {
         "iter": 126,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -8060,12 +8186,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1477,
-        "iter_time_sec": 0.48412613500113366,
-        "total_time_sec": 64.95769421899968
+        "iter_time_sec": 0.5063128559995675,
+        "total_time_sec": 65.7490711069986
     },
     {
         "iter": 127,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -8124,12 +8251,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1489,
-        "iter_time_sec": 0.4475057570016361,
-        "total_time_sec": 65.40526968199993
+        "iter_time_sec": 0.4552961250010412,
+        "total_time_sec": 66.20443562400033
     },
     {
         "iter": 128,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -8188,12 +8316,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1501,
-        "iter_time_sec": 0.47128449700176134,
-        "total_time_sec": 65.87664319399846
+        "iter_time_sec": 0.46504503799951635,
+        "total_time_sec": 66.66954823599735
     },
     {
         "iter": 129,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -8252,16 +8381,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1514,
-        "iter_time_sec": 0.49634835600227234,
-        "total_time_sec": 66.37306182199973
+        "iter_time_sec": 0.5004414549985086,
+        "total_time_sec": 67.17005475900078
     },
     {
         "iter": 130,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 0.0,
-        "fitness_plateau": true,
-        "plateau_check_streak": 1,
+        "improvement_window": 3.0,
+        "fitness_plateau": false,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8275,10 +8405,10 @@
         "schedule_collapse": false,
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
-        "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "stagnation_score": 0.2,
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -8316,16 +8446,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1528,
-        "iter_time_sec": 1.2447908819995064,
-        "total_time_sec": 67.61791936199734
+        "iter_time_sec": 1.2327280869976676,
+        "total_time_sec": 68.40284811699894
     },
     {
         "iter": 131,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8380,16 +8511,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1536,
-        "iter_time_sec": 0.3019300999985717,
-        "total_time_sec": 67.91992652699992
+        "iter_time_sec": 0.29733666900210665,
+        "total_time_sec": 68.70025779199932
     },
     {
         "iter": 132,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8444,16 +8576,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1547,
-        "iter_time_sec": 0.4221142559981672,
-        "total_time_sec": 68.34211052899991
+        "iter_time_sec": 0.43095334000099683,
+        "total_time_sec": 69.1312863969979
     },
     {
         "iter": 133,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8508,16 +8641,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1558,
-        "iter_time_sec": 0.4274426970005152,
-        "total_time_sec": 68.76962049199938
+        "iter_time_sec": 0.43352329499975895,
+        "total_time_sec": 69.56487852300052
     },
     {
         "iter": 134,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8572,16 +8706,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1572,
-        "iter_time_sec": 0.5318545640002412,
-        "total_time_sec": 69.30154832399785
+        "iter_time_sec": 0.5372203169972636,
+        "total_time_sec": 70.10216503999982
     },
     {
         "iter": 135,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8636,16 +8771,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1582,
-        "iter_time_sec": 0.3827460339998652,
-        "total_time_sec": 69.6843619579995
+        "iter_time_sec": 0.38040728800115176,
+        "total_time_sec": 70.48263748799945
     },
     {
         "iter": 136,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8700,16 +8836,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1592,
-        "iter_time_sec": 0.3892735970002832,
-        "total_time_sec": 70.07370860099763
+        "iter_time_sec": 0.39781972800119547,
+        "total_time_sec": 70.88052349099962
     },
     {
         "iter": 137,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8764,16 +8901,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1603,
-        "iter_time_sec": 0.4412678570006392,
-        "total_time_sec": 70.51504534799824
+        "iter_time_sec": 0.43151902699901257,
+        "total_time_sec": 71.31210777399974
     },
     {
         "iter": 138,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8828,16 +8966,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1615,
-        "iter_time_sec": 0.45859194199874764,
-        "total_time_sec": 70.97370637799759
+        "iter_time_sec": 0.4583821150008589,
+        "total_time_sec": 71.77055537499837
     },
     {
         "iter": 139,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8892,16 +9031,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1626,
-        "iter_time_sec": 0.41259947099752026,
-        "total_time_sec": 71.38637341499998
+        "iter_time_sec": 0.41052668300108053,
+        "total_time_sec": 72.18114495699774
     },
     {
         "iter": 140,
         "best_fitness": 3578.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 0.0,
-        "fitness_plateau": true,
-        "plateau_check_streak": 2,
+        "improvement_window": 3.0,
+        "fitness_plateau": false,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -8915,10 +9055,10 @@
         "schedule_collapse": false,
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
-        "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "stagnation_score": 0.2,
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -8956,16 +9096,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1637,
-        "iter_time_sec": 1.1409345770007349,
-        "total_time_sec": 72.52737688799971
+        "iter_time_sec": 1.1069188960027532,
+        "total_time_sec": 73.28812909699991
     },
     {
         "iter": 141,
         "best_fitness": 3577.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9020,16 +9161,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1645,
-        "iter_time_sec": 0.2955573569997796,
-        "total_time_sec": 72.8230207839988
+        "iter_time_sec": 0.2920638229988981,
+        "total_time_sec": 73.58025986400025
     },
     {
         "iter": 142,
         "best_fitness": 3577.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9084,16 +9226,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1656,
-        "iter_time_sec": 0.4198188039990782,
-        "total_time_sec": 73.24292351099939
+        "iter_time_sec": 0.4189562419996946,
+        "total_time_sec": 73.99928099300087
     },
     {
         "iter": 143,
         "best_fitness": 3577.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9148,16 +9291,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1669,
-        "iter_time_sec": 0.4949842530004389,
-        "total_time_sec": 73.73797624299914
+        "iter_time_sec": 0.48905033099799766,
+        "total_time_sec": 74.48839628099813
     },
     {
         "iter": 144,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9212,16 +9356,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1677,
-        "iter_time_sec": 0.31130481000218424,
-        "total_time_sec": 74.04934993799907
+        "iter_time_sec": 0.288362530998711,
+        "total_time_sec": 74.77682935199846
     },
     {
         "iter": 145,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9276,16 +9421,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1688,
-        "iter_time_sec": 0.42778744300085236,
-        "total_time_sec": 74.47720466999817
+        "iter_time_sec": 0.42726416399818845,
+        "total_time_sec": 75.20415961099934
     },
     {
         "iter": 146,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9340,16 +9486,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1699,
-        "iter_time_sec": 0.4104099439973652,
-        "total_time_sec": 74.88768713299942
+        "iter_time_sec": 0.4126001990007353,
+        "total_time_sec": 75.6168213719975
     },
     {
         "iter": 147,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9404,16 +9551,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1707,
-        "iter_time_sec": 0.2940346139985195,
-        "total_time_sec": 75.18179411299934
+        "iter_time_sec": 0.30056916499961517,
+        "total_time_sec": 75.91745956500017
     },
     {
         "iter": 148,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9468,16 +9616,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1716,
-        "iter_time_sec": 0.34336525699836784,
-        "total_time_sec": 75.5252282099973
+        "iter_time_sec": 0.3313736210002389,
+        "total_time_sec": 76.24889660799818
     },
     {
         "iter": 149,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -9532,12 +9681,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1731,
-        "iter_time_sec": 0.5760398509992228,
-        "total_time_sec": 76.10133542599942
+        "iter_time_sec": 0.5737843639981293,
+        "total_time_sec": 76.82274219099781
     },
     {
         "iter": 150,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
         "improvement_window": 3.0,
         "fitness_plateau": false,
@@ -9556,9 +9706,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.2,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -9596,12 +9746,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1740,
-        "iter_time_sec": 1.033180991998961,
-        "total_time_sec": 77.13458567099951
+        "iter_time_sec": 1.0257729529985227,
+        "total_time_sec": 77.84858116999749
     },
     {
         "iter": 151,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -9660,12 +9811,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1753,
-        "iter_time_sec": 0.49209704999884707,
-        "total_time_sec": 77.62676970499888
+        "iter_time_sec": 0.4775397779994819,
+        "total_time_sec": 78.32618844199897
     },
     {
         "iter": 152,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -9724,12 +9876,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1762,
-        "iter_time_sec": 0.33442026099874056,
-        "total_time_sec": 77.96127658299883
+        "iter_time_sec": 0.32386826400033897,
+        "total_time_sec": 78.65055309099989
     },
     {
         "iter": 153,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -9788,12 +9941,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1779,
-        "iter_time_sec": 0.6416001309989952,
-        "total_time_sec": 78.6029500409968
+        "iter_time_sec": 0.6233646820001013,
+        "total_time_sec": 79.27398070399795
     },
     {
         "iter": 154,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -9852,12 +10006,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1789,
-        "iter_time_sec": 0.3911607570007618,
-        "total_time_sec": 78.99418188999698
+        "iter_time_sec": 0.38974072800192516,
+        "total_time_sec": 79.66379656500067
     },
     {
         "iter": 155,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -9916,12 +10071,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1798,
-        "iter_time_sec": 0.33303647600041586,
-        "total_time_sec": 79.32729230499899
+        "iter_time_sec": 0.33468180099953315,
+        "total_time_sec": 79.99854289699942
     },
     {
         "iter": 156,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -9980,12 +10136,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1807,
-        "iter_time_sec": 0.341472331998375,
-        "total_time_sec": 79.66883317300017
+        "iter_time_sec": 0.335596846001863,
+        "total_time_sec": 80.33420599300007
     },
     {
         "iter": 157,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -10044,12 +10201,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1814,
-        "iter_time_sec": 0.26304544099912164,
-        "total_time_sec": 79.9319687299976
+        "iter_time_sec": 0.2611549440007366,
+        "total_time_sec": 80.59544795399779
     },
     {
         "iter": 158,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -10108,12 +10266,13 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1826,
-        "iter_time_sec": 0.46215605300312745,
-        "total_time_sec": 80.39419469799759
+        "iter_time_sec": 0.4793655530011165,
+        "total_time_sec": 81.07487798500006
     },
     {
         "iter": 159,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
@@ -10172,16 +10331,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1836,
-        "iter_time_sec": 0.36771280899847625,
-        "total_time_sec": 80.761976218997
+        "iter_time_sec": 0.3773638220009161,
+        "total_time_sec": 81.45231527400028
     },
     {
         "iter": 160,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 0.0,
-        "fitness_plateau": true,
-        "plateau_check_streak": 1,
+        "improvement_window": 3.0,
+        "fitness_plateau": false,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10195,10 +10355,10 @@
         "schedule_collapse": false,
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
-        "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "stagnation_score": 0.2,
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -10236,16 +10396,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1845,
-        "iter_time_sec": 1.0402547389967367,
-        "total_time_sec": 81.80229913999938
+        "iter_time_sec": 1.0329176579980412,
+        "total_time_sec": 82.48529749999943
     },
     {
         "iter": 161,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10300,16 +10461,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1861,
-        "iter_time_sec": 0.6130356849971577,
-        "total_time_sec": 82.41540398599682
+        "iter_time_sec": 0.6127117690011801,
+        "total_time_sec": 83.09808362499825
     },
     {
         "iter": 162,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10364,16 +10526,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1870,
-        "iter_time_sec": 0.338398607000272,
-        "total_time_sec": 82.75386793599682
+        "iter_time_sec": 0.3467682459995558,
+        "total_time_sec": 83.44491692199881
     },
     {
         "iter": 163,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10428,16 +10591,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1882,
-        "iter_time_sec": 0.45629564900082187,
-        "total_time_sec": 83.2102312049974
+        "iter_time_sec": 0.462561864998861,
+        "total_time_sec": 83.90754414899857
     },
     {
         "iter": 164,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10492,16 +10656,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1890,
-        "iter_time_sec": 0.2937591390000307,
-        "total_time_sec": 83.50405653499911
+        "iter_time_sec": 0.31607061799877556,
+        "total_time_sec": 84.22368326099968
     },
     {
         "iter": 165,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10556,16 +10721,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1900,
-        "iter_time_sec": 0.3750986219965853,
-        "total_time_sec": 83.87922458199682
+        "iter_time_sec": 0.41692619300010847,
+        "total_time_sec": 84.64068250700075
     },
     {
         "iter": 166,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10620,16 +10786,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1908,
-        "iter_time_sec": 0.2939910029999737,
-        "total_time_sec": 84.17328519199873
+        "iter_time_sec": 0.3070619970021653,
+        "total_time_sec": 84.94780803699905
     },
     {
         "iter": 167,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10684,16 +10851,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1916,
-        "iter_time_sec": 0.2949333629985631,
-        "total_time_sec": 84.4682904179972
+        "iter_time_sec": 0.3029779970020172,
+        "total_time_sec": 85.25085178699737
     },
     {
         "iter": 168,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10748,16 +10916,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1923,
-        "iter_time_sec": 0.25266349199955584,
-        "total_time_sec": 84.72102161899966
+        "iter_time_sec": 0.2614337369996065,
+        "total_time_sec": 85.51236290700035
     },
     {
         "iter": 169,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 1,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -10812,16 +10981,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1934,
-        "iter_time_sec": 0.41481855899837683,
-        "total_time_sec": 85.13590619199749
+        "iter_time_sec": 0.429600201001449,
+        "total_time_sec": 85.94202813899756
     },
     {
         "iter": 170,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
-        "improvement_window": 0.0,
-        "fitness_plateau": true,
-        "plateau_check_streak": 2,
+        "improvement_window": 3.0,
+        "fitness_plateau": false,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -10835,10 +11005,10 @@
         "schedule_collapse": false,
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
-        "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "stagnation_score": 0.2,
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -10876,16 +11046,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1947,
-        "iter_time_sec": 1.1675859259994468,
-        "total_time_sec": 86.30356487699828
+        "iter_time_sec": 1.1827235339987965,
+        "total_time_sec": 87.12481529899742
     },
     {
         "iter": 171,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -10940,16 +11111,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1962,
-        "iter_time_sec": 0.5824378050019732,
-        "total_time_sec": 86.88607517199853
+        "iter_time_sec": 0.5780199270011508,
+        "total_time_sec": 87.70290670699978
     },
     {
         "iter": 172,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11004,16 +11176,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1971,
-        "iter_time_sec": 0.3273736600021948,
-        "total_time_sec": 87.21352022499923
+        "iter_time_sec": 0.35382019499957096,
+        "total_time_sec": 88.0567928399978
     },
     {
         "iter": 173,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11068,16 +11241,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1982,
-        "iter_time_sec": 0.4126004619974992,
-        "total_time_sec": 87.62618825199752
+        "iter_time_sec": 0.41466950500034727,
+        "total_time_sec": 88.47152610699777
     },
     {
         "iter": 174,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11132,16 +11306,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 1992,
-        "iter_time_sec": 0.3912798700002895,
-        "total_time_sec": 88.01753269599794
+        "iter_time_sec": 0.3776093820015376,
+        "total_time_sec": 88.84919984500084
     },
     {
         "iter": 175,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11196,16 +11371,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2006,
-        "iter_time_sec": 0.5405698969989317,
-        "total_time_sec": 88.55817015999855
+        "iter_time_sec": 0.5439784619993588,
+        "total_time_sec": 89.39326435700059
     },
     {
         "iter": 176,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11260,16 +11436,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2014,
-        "iter_time_sec": 0.2917450919994735,
-        "total_time_sec": 88.8499871119966
+        "iter_time_sec": 0.2983210029997281,
+        "total_time_sec": 89.69165123799758
     },
     {
         "iter": 177,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11324,16 +11501,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2023,
-        "iter_time_sec": 0.33956735500032664,
-        "total_time_sec": 89.18962755599932
+        "iter_time_sec": 0.3435623220029811,
+        "total_time_sec": 90.03527543199743
     },
     {
         "iter": 178,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11388,16 +11566,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2036,
-        "iter_time_sec": 0.4897391880003852,
-        "total_time_sec": 89.67943521399866
+        "iter_time_sec": 0.4941361519995553,
+        "total_time_sec": 90.52947524000047
     },
     {
         "iter": 179,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 2,
+        "plateau_check_streak": 0,
         "unique_ranking_count": 10,
         "unique_schedule_count": 9,
         "unique_machine_order_families": 9,
@@ -11452,16 +11631,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2048,
-        "iter_time_sec": 0.4555786340024497,
-        "total_time_sec": 90.13508159599951
+        "iter_time_sec": 0.46408150999923237,
+        "total_time_sec": 90.99362200999894
     },
     {
         "iter": 180,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
         "improvement_window": 0.0,
         "fitness_plateau": true,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11476,9 +11656,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -11516,16 +11696,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2056,
-        "iter_time_sec": 1.0398019189997285,
-        "total_time_sec": 91.17496922999999
+        "iter_time_sec": 0.9937610209999548,
+        "total_time_sec": 91.98744299899772
     },
     {
         "iter": 181,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11580,16 +11761,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2067,
-        "iter_time_sec": 0.42316680799922324,
-        "total_time_sec": 91.59821142999863
+        "iter_time_sec": 0.4406896299988148,
+        "total_time_sec": 92.42821114499748
     },
     {
         "iter": 182,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11644,16 +11826,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2077,
-        "iter_time_sec": 0.37682633499935037,
-        "total_time_sec": 91.9751081309987
+        "iter_time_sec": 0.3687317689982592,
+        "total_time_sec": 92.79701975499847
     },
     {
         "iter": 183,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11708,16 +11891,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2088,
-        "iter_time_sec": 0.4003448389994446,
-        "total_time_sec": 92.3755217580001
+        "iter_time_sec": 0.40710924100130796,
+        "total_time_sec": 93.20419795899943
     },
     {
         "iter": 184,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11772,16 +11956,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2098,
-        "iter_time_sec": 0.3738299709984858,
-        "total_time_sec": 92.74943666599938
+        "iter_time_sec": 0.3939633150002919,
+        "total_time_sec": 93.59823105299802
     },
     {
         "iter": 185,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11836,16 +12021,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2107,
-        "iter_time_sec": 0.3421376060032344,
-        "total_time_sec": 93.09165533599662
+        "iter_time_sec": 0.35189810500014573,
+        "total_time_sec": 93.95022755500031
     },
     {
         "iter": 186,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11900,16 +12086,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2122,
-        "iter_time_sec": 0.5668392259976827,
-        "total_time_sec": 93.65856375099975
+        "iter_time_sec": 0.5803163720011071,
+        "total_time_sec": 94.5306193840006
     },
     {
         "iter": 187,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -11964,16 +12151,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2134,
-        "iter_time_sec": 0.44477609699970344,
-        "total_time_sec": 94.10342180799853
+        "iter_time_sec": 0.4463946709984157,
+        "total_time_sec": 94.97709012699852
     },
     {
         "iter": 188,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12028,16 +12216,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2143,
-        "iter_time_sec": 0.3403973370004678,
-        "total_time_sec": 94.4438889789999
+        "iter_time_sec": 0.34402817800219054,
+        "total_time_sec": 95.3211841079974
     },
     {
         "iter": 189,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 3,
+        "plateau_check_streak": 1,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12092,16 +12281,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2154,
-        "iter_time_sec": 0.4100580269987404,
-        "total_time_sec": 94.85402221299955
+        "iter_time_sec": 0.41010199400261627,
+        "total_time_sec": 95.73135117499987
     },
     {
         "iter": 190,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
         "improvement_window": 0.0,
         "fitness_plateau": true,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12116,9 +12306,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": null,
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -12156,16 +12346,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2167,
-        "iter_time_sec": 1.1972910900003626,
-        "total_time_sec": 96.05138210699806
+        "iter_time_sec": 1.2107780210026249,
+        "total_time_sec": 96.94219107900062
     },
     {
         "iter": 191,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12220,16 +12411,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2176,
-        "iter_time_sec": 0.33389791100125876,
-        "total_time_sec": 96.38535500799844
+        "iter_time_sec": 0.3459436730008747,
+        "total_time_sec": 97.28820214000007
     },
     {
         "iter": 192,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12284,16 +12476,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2185,
-        "iter_time_sec": 0.34839545100112446,
-        "total_time_sec": 96.73381995999807
+        "iter_time_sec": 0.3482668469987402,
+        "total_time_sec": 97.63653533400065
     },
     {
         "iter": 193,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12348,16 +12541,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2194,
-        "iter_time_sec": 0.33821107000039774,
-        "total_time_sec": 97.07210291699812
+        "iter_time_sec": 0.3408946380004636,
+        "total_time_sec": 97.97749532799935
     },
     {
         "iter": 194,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12412,16 +12606,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2204,
-        "iter_time_sec": 0.3931587180013594,
-        "total_time_sec": 97.46532826199837
+        "iter_time_sec": 0.382054806999804,
+        "total_time_sec": 98.35963318599897
     },
     {
         "iter": 195,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12476,16 +12671,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2217,
-        "iter_time_sec": 0.4893537700008892,
-        "total_time_sec": 97.95475180299763
+        "iter_time_sec": 0.49191050700028427,
+        "total_time_sec": 98.85161283599882
     },
     {
         "iter": 196,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12540,16 +12736,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2228,
-        "iter_time_sec": 0.41954347399951075,
-        "total_time_sec": 98.37436152499868
+        "iter_time_sec": 0.43153895899740746,
+        "total_time_sec": 99.28321864399913
     },
     {
         "iter": 197,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12604,16 +12801,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2240,
-        "iter_time_sec": 0.4496104709978681,
-        "total_time_sec": 98.82404414999837
+        "iter_time_sec": 0.44902314000137267,
+        "total_time_sec": 99.73230788599903
     },
     {
         "iter": 198,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12668,16 +12866,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2248,
-        "iter_time_sec": 0.3020434620011656,
-        "total_time_sec": 99.12615609899876
+        "iter_time_sec": 0.30168251099894405,
+        "total_time_sec": 100.03408654899977
     },
     {
         "iter": 199,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": false,
         "improvement_window": null,
         "fitness_plateau": false,
-        "plateau_check_streak": 4,
+        "plateau_check_streak": 2,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12732,16 +12931,17 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2260,
-        "iter_time_sec": 0.45935230100076296,
-        "total_time_sec": 99.58557441599987
+        "iter_time_sec": 0.4861938640024164,
+        "total_time_sec": 100.52034213799925
     },
     {
         "iter": 200,
         "best_fitness": 3575.0,
+        "stagnation_ssr_enabled": false,
         "ssr_check_iter": true,
         "improvement_window": 0.0,
         "fitness_plateau": true,
-        "plateau_check_streak": 5,
+        "plateau_check_streak": 3,
         "unique_ranking_count": 10,
         "unique_schedule_count": 10,
         "unique_machine_order_families": 10,
@@ -12756,9 +12956,9 @@
         "gbest_dup_collapse": false,
         "structural_stagnation": true,
         "stagnation_score": 0.6000000000000001,
-        "ssr_activation_reason": "not_activated",
+        "ssr_activation_reason": "rdk_only",
         "ssr_search_mode": "none",
-        "ssr_skip_reason": "tail",
+        "ssr_skip_reason": "rdk_only",
         "ssr_no_improve_streak": 0,
         "ssr_cooldown_remaining": 0,
         "strong_structural_collapse": false,
@@ -12796,7 +12996,7 @@
         "operation_reference_len": 974,
         "knowledge_warning": null,
         "fe_counter": 2272,
-        "iter_time_sec": 1.170603228998516,
-        "total_time_sec": 100.75625224299802
+        "iter_time_sec": 1.1392541290006193,
+        "total_time_sec": 101.65966533499886
     }
 ]

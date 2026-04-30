@@ -133,133 +133,6 @@ def _average_pairwise_distance(signatures, distance_func):
     return total / max(1, count)
 
 
-def _resolve_count_threshold(threshold, population_size):
-    if threshold <= 1.0:
-        return max(1, int(math.ceil(threshold * population_size)))
-    return max(1, int(threshold))
-
-
-def detect_fitness_plateau(best_score_history, stagnation_patience, eps_improve):
-    if len(best_score_history) < stagnation_patience + 1:
-        return False, None
-
-    old_score = float(best_score_history[-stagnation_patience - 1]["score"])
-    current_score = float(best_score_history[-1]["score"])
-    improvement = old_score - current_score
-    return improvement <= eps_improve, improvement
-
-
-def detect_structural_stagnation(
-    machine_order_signatures,
-    ranking_signatures,
-    decoded_signatures,
-    gbest_decoded_signature,
-    population_size,
-    machine_family_threshold,
-    ranking_collapse_threshold,
-    structural_distance_threshold,
-    unique_schedule_threshold,
-    dup_ratio_threshold,
-    use_machine_order_signature=True,
-    use_ranking_similarity=True,
-):
-    unique_machine_families = (
-        len(set(machine_order_signatures)) if use_machine_order_signature else population_size
-    )
-    machine_family_limit = _resolve_count_threshold(machine_family_threshold, population_size)
-    avg_machine_distance = (
-        _average_pairwise_distance(machine_order_signatures, compute_machine_order_distance)
-        if use_machine_order_signature
-        else 1.0
-    )
-    avg_ranking_distance = (
-        _average_pairwise_distance(ranking_signatures, compute_kendall_distance)
-        if use_ranking_similarity
-        else 1.0
-    )
-
-    machine_order_collapse = (
-        use_machine_order_signature
-        and (
-            unique_machine_families <= machine_family_limit
-            or avg_machine_distance <= structural_distance_threshold
-        )
-    )
-    ranking_collapse = use_ranking_similarity and avg_ranking_distance <= ranking_collapse_threshold
-
-    unique_schedule_count = len(set(sig for sig in decoded_signatures if sig is not None))
-    schedule_limit = _resolve_count_threshold(unique_schedule_threshold, population_size)
-    schedule_collapse = unique_schedule_count <= schedule_limit
-
-    dup_ratio_to_gbest = 0.0
-    if gbest_decoded_signature is not None:
-        dup_ratio_to_gbest = float(
-            sum(sig == gbest_decoded_signature for sig in decoded_signatures) / max(1, population_size)
-        )
-    gbest_dup_collapse = dup_ratio_to_gbest >= dup_ratio_threshold
-
-    structural_stagnation = (
-        machine_order_collapse
-        or ranking_collapse
-        or schedule_collapse
-        or gbest_dup_collapse
-    )
-    details = {
-        "unique_machine_families": int(unique_machine_families),
-        "machine_family_limit": int(machine_family_limit),
-        "unique_schedule_count": int(unique_schedule_count),
-        "schedule_limit": int(schedule_limit),
-        "dup_ratio_to_gbest": float(dup_ratio_to_gbest),
-        "avg_machine_order_distance": float(avg_machine_distance),
-        "avg_ranking_distance": float(avg_ranking_distance),
-        "machine_order_collapse": bool(machine_order_collapse),
-        "ranking_collapse": bool(ranking_collapse),
-        "schedule_collapse": bool(schedule_collapse),
-        "gbest_dup_collapse": bool(gbest_dup_collapse),
-        "structural_stagnation": bool(structural_stagnation),
-    }
-    return structural_stagnation, details
-
-
-def compute_stagnation_score(
-    fitness_plateau_score,
-    machine_order_collapse_score,
-    ranking_collapse_score,
-    schedule_collapse_score,
-    gbest_dup_collapse_score,
-    stagnation_score_weights=None,
-):
-    weights = {
-        "fitness": 0.4,
-        "machine_order": 0.2,
-        "ranking": 0.2,
-        "schedule": 0.1,
-        "gbest_dup": 0.1,
-    }
-    if stagnation_score_weights:
-        weights.update(stagnation_score_weights)
-
-    return (
-        weights["fitness"] * fitness_plateau_score
-        + weights["machine_order"] * machine_order_collapse_score
-        + weights["ranking"] * ranking_collapse_score
-        + weights["schedule"] * schedule_collapse_score
-        + weights["gbest_dup"] * gbest_dup_collapse_score
-    )
-
-
-def should_activate_ssr(
-    fitness_plateau,
-    structural_stagnation,
-    stagnation_score,
-    stagnation_mode="rule",
-    stagnation_score_threshold=0.7,
-):
-    if stagnation_mode == "score":
-        return fitness_plateau and stagnation_score >= stagnation_score_threshold
-    return fitness_plateau and structural_stagnation
-
-
 def _evaluate_candidate(x, fobj=None, decoder=None, build_signatures=False):
     if decoder is not None:
         schedule_df, metrics = decoder.decode_from_continuous(x)
@@ -357,20 +230,6 @@ def _update_elite_archive(elite_archive, pos, fitness, evaluations, archive_sign
     return archive[:elite_size]
 
 
-def _select_protected_elite_indices(fitness, archive_signatures, elite_size):
-    protected_indices = []
-    seen_signatures = set()
-    for idx in np.argsort(fitness):
-        signature = archive_signatures[idx]
-        if signature in seen_signatures:
-            continue
-        protected_indices.append(int(idx))
-        seen_signatures.add(signature)
-        if len(protected_indices) >= elite_size:
-            break
-    return protected_indices
-
-
 def _is_feasible_metrics(metrics, missing_feasibility_is_feasible=False):
     if not metrics:
         return False
@@ -407,52 +266,6 @@ def _extract_operation_priority_from_schedule(schedule_df):
         operation = (int(row.job_id), int(row.voyage), int(row.op_seq))
         knowledge[operation] = rank / denom
     return knowledge
-
-
-def _select_ssr_replacement_indices(
-    fitness,
-    metrics_list,
-    protected_indices,
-    restart_budget,
-    decoder_available=True,
-    missing_feasibility_is_feasible=False,
-):
-    if restart_budget <= 0:
-        return [], 0, 0
-
-    protected = set(int(idx) for idx in protected_indices)
-    worst_order = [int(idx) for idx in np.argsort(fitness)[::-1] if int(idx) not in protected]
-
-    if not decoder_available:
-        selected = worst_order[:restart_budget]
-        return selected, 0, len(selected)
-
-    infeasible_indices = [
-        idx for idx in worst_order
-        if not _is_feasible_metrics(
-            metrics_list[idx],
-            missing_feasibility_is_feasible=missing_feasibility_is_feasible,
-        )
-    ]
-    feasible_indices = [
-        idx for idx in worst_order
-        if _is_feasible_metrics(
-            metrics_list[idx],
-            missing_feasibility_is_feasible=missing_feasibility_is_feasible,
-        )
-    ]
-
-    selected = infeasible_indices[:restart_budget]
-    infeasible_replaced = len(selected)
-
-    remaining = restart_budget - len(selected)
-    feasible_replaced = 0
-    if remaining > 0:
-        extra = feasible_indices[:remaining]
-        selected.extend(extra)
-        feasible_replaced = len(extra)
-
-    return selected, infeasible_replaced, feasible_replaced
 
 
 def _build_operation_priority_knowledge_from_archive(
@@ -630,53 +443,6 @@ def _build_dimensional_search_guidance(
     }
 
 
-def _generate_reduced_space_candidate(
-    guidance,
-    lb,
-    ub,
-    gbest_pull=0.35,
-    uncertain_uniform_ratio=0.20,
-):
-    sample = guidance["reduced_lb"] + (
-        guidance["reduced_ub"] - guidance["reduced_lb"]
-    ) * np.random.rand(lb.size)
-    if gbest_pull > 0.0:
-        pull = np.random.rand(lb.size) < gbest_pull
-        sample[pull] = 0.5 * sample[pull] + 0.5 * guidance["gbest"][pull]
-
-    uncertain = guidance["confidence"] < 0.35
-    if np.any(uncertain) and uncertain_uniform_ratio > 0.0:
-        mix = uncertain & (np.random.rand(lb.size) < uncertain_uniform_ratio)
-        sample[mix] = lb[mix] + (ub[mix] - lb[mix]) * np.random.rand(int(np.sum(mix)))
-
-    return np.clip(sample, lb, ub)
-
-
-def _generate_diversity_exploration_candidate(
-    guidance,
-    lb,
-    ub,
-    dim_ratio=0.25,
-    opposition_ratio=0.50,
-    gaussian_scale=0.025,
-):
-    interval = np.maximum(ub - lb, 1e-12)
-    candidate = guidance["gbest"].copy()
-    dim_ratio = float(np.clip(dim_ratio, 0.0, 1.0))
-    mask = np.random.rand(lb.size) < dim_ratio
-    if not np.any(mask):
-        mask[np.random.randint(0, lb.size)] = True
-
-    uniform_mask = mask & (np.random.rand(lb.size) >= opposition_ratio)
-    opposite_mask = mask & ~uniform_mask
-    candidate[uniform_mask] = lb[uniform_mask] + interval[uniform_mask] * np.random.rand(int(np.sum(uniform_mask)))
-    candidate[opposite_mask] = lb[opposite_mask] + ub[opposite_mask] - candidate[opposite_mask]
-
-    jitter = np.random.normal(loc=0.0, scale=gaussian_scale, size=lb.size) * interval
-    candidate += jitter
-    return np.clip(candidate, lb, ub)
-
-
 def _apply_inline_search_guidance(
     candidate,
     guidance,
@@ -744,22 +510,7 @@ def CAOA_SSR(
     max_FEs=None,
     initial_pos=None,
     IT=10,
-    K=30,
-    stagnation_window=None,
-    stagnation_patience=None,
-    eps_improve=1e-6,
     elite_size=5,
-    dup_ratio_threshold=0.6,
-    unique_schedule_threshold=0.25,
-    machine_family_threshold=0.7,
-    ranking_collapse_threshold=0.08,
-    structural_distance_threshold=0.25,
-    use_machine_order_signature=True,
-    use_ranking_similarity=True,
-    stagnation_mode="rule",
-    stagnation_score_weights=None,
-    stagnation_score_threshold=0.7,
-    partial_restart_ratio=0.25,
     preserve_default_random_reinit=True,
     ssr_elite_k=None,
     ssr_min_knowledge_signal_ratio=0.8,
@@ -767,11 +518,6 @@ def CAOA_SSR(
     ssr_knowledge_uniform_mix=0.10,
     ssr_knowledge_min_noise_scale=0.01,
     ssr_knowledge_max_confidence=0.85,
-    ssr_allow_plateau_activation=True,
-    ssr_min_plateau_checks=2,
-    ssr_candidate_trials=3,
-    ssr_accept_only_improvement=True,
-    ssr_commit_requires_gbest_improvement=False,
     ssr_inline_guidance=False,
     ssr_inline_prob=0.15,
     ssr_inline_confidence_threshold=0.70,
@@ -779,31 +525,10 @@ def CAOA_SSR(
     ssr_inline_reduced_blend=0.35,
     ssr_inline_explore_dim_ratio=0.15,
     ssr_inline_reinit_uses_knowledge=True,
-    ssr_random_fallback=False,
     ssr_balanced_reinit=True,
-    ssr_explore_dim_ratio=0.25,
     ssr_explore_opposition_ratio=0.50,
     ssr_reduction_min_width=0.04,
     ssr_reduction_width_scale=2.5,
-    ssr_reduced_gbest_pull=0.35,
-    ssr_uncertain_uniform_ratio=0.20,
-    ssr_force_mode_quota=False,
-    ssr_adaptive_mode=True,
-    ssr_escape_after_failed_activations=2,
-    ssr_cooldown_checks=1,
-    ssr_skip_last_checks=1,
-    ssr_escape_reduction_width_multiplier=1.8,
-    ssr_escape_noise_multiplier=1.7,
-    ssr_escape_dim_ratio=0.45,
-    ssr_escape_gbest_pull=0.15,
-    ssr_escape_accept_margin_ratio=0.03,
-    ssr_force_escape_after_failed_exploit=True,
-    ssr_exploit_max_unique_rank_ratio=0.85,
-    ssr_exploit_max_machine_family_ratio=0.85,
-    ssr_exploit_min_dup_ratio=0.35,
-    ssr_exploit_restart_ratio=0.10,
-    ssr_exploit_diversity_quota=1,
-    ssr_escape_diversity_quota=3,
     missing_feasibility_is_feasible=False,
     return_diagnostics=False,
     verbose=True,
@@ -812,11 +537,6 @@ def CAOA_SSR(
         raise ValueError("Either `fobj` or `decoder` must be provided to CAOA_SSR.")
 
     lb, ub = _normalize_bounds(lb, ub, dim)
-    if stagnation_window is None:
-        stagnation_window = K
-    if stagnation_patience is None:
-        stagnation_patience = max(1, int(math.ceil(stagnation_window / max(1, IT))))
-
     if initial_pos is not None:
         pos = np.clip(np.array(initial_pos, dtype=float).copy(), lb, ub)
     else:
@@ -848,18 +568,12 @@ def CAOA_SSR(
     gBest = pos[best_idx].copy()
     gBestDecodedSignature = decoded_signatures[best_idx]
 
-    best_score_history = []
+    rdk_guidance_history = []
     best_decoded_signature_history = []
-    best_structural_signature_history = []
     elite_archive = []
     cg_curve = []
     avg_curve = []
     diagnostics = []
-    plateau_check_streak = 0
-    ssr_no_improve_streak = 0
-    ssr_cooldown_remaining = 0
-    ssr_failure_reference_best = float(gBestScore)
-    last_ssr_failed_mode = None
     inline_dimensional_guidance = None
     inline_priority_knowledge = None
 
@@ -899,28 +613,14 @@ def CAOA_SSR(
         iter_start = time.perf_counter()
         energy_reinit_count = 0
         deterioration_reinit_count = 0
-        ssr_replacement_count = 0
-        ssr_candidate_attempt_count = 0
-        ssr_rejected_candidate_count = 0
-        knowledge_replacement_count = 0
-        reduced_space_replacement_count = 0
-        diversity_replacement_count = 0
-        knowledge_candidate_count = 0
-        reduced_space_candidate_count = 0
-        diversity_candidate_count = 0
         inline_reduced_dim_count = 0
         inline_explore_dim_count = 0
         inline_knowledge_reinit_count = 0
-        ssr_fallback_random_count = 0
-        ssr_infeasible_replaced = 0
-        ssr_worst_feasible_replaced = 0
         knowledge_signal_ratio = 0.0
         knowledge_confidence_mean = 0.0
         matched_operation_count = 0
         total_operation_count = len(operation_reference)
-        ssr_triggered = False
-        ssr_search_mode = "none"
-        ssr_skip_reason = None
+        knowledge_warning = None
         check_this_iter = (t + 1) % IT == 0
 
         if max_FEs is not None and fe_counter >= max_FEs:
@@ -1064,27 +764,6 @@ def CAOA_SSR(
             gBestScore = float(fitness[best_idx])
             gBest = pos[best_idx].copy()
             gBestDecodedSignature = decoded_signatures[best_idx]
-        if gBestScore < ssr_failure_reference_best - eps_improve:
-            ssr_no_improve_streak = 0
-            ssr_failure_reference_best = float(gBestScore)
-            last_ssr_failed_mode = None
-
-        stagnation_details = {
-            "improvement_window": None,
-            "fitness_plateau": False,
-            "structural_stagnation": False,
-            "machine_order_collapse": False,
-            "ranking_collapse": False,
-            "schedule_collapse": False,
-            "gbest_dup_collapse": False,
-            "stagnation_score": 0.0,
-            "activation_reason": "skipped_until_it" if not check_this_iter else "not_checked",
-            "ssr_search_mode": ssr_search_mode,
-            "ssr_skip_reason": ssr_skip_reason,
-            "ssr_no_improve_streak": ssr_no_improve_streak,
-            "ssr_cooldown_remaining": ssr_cooldown_remaining,
-            "knowledge_warning": None,
-        }
 
         if check_this_iter:
             decoded_signatures, machine_order_signatures, ranking_signatures = _refresh_population_metadata(
@@ -1134,175 +813,17 @@ def CAOA_SSR(
                     total_operation_count = inline_priority_knowledge["total_count"]
                     if knowledge_signal_ratio < ssr_min_knowledge_signal_ratio:
                         inline_priority_knowledge = None
+                        knowledge_warning = f"low_knowledge_signal:{knowledge_signal_ratio:.3f}"
+                elif ssr_inline_reinit_uses_knowledge:
+                    knowledge_warning = "knowledge_unavailable"
+            elif ssr_inline_guidance and ssr_inline_reinit_uses_knowledge:
+                if not operation_reference_valid:
+                    knowledge_warning = operation_reference_error
+                elif not elite_archive:
+                    knowledge_warning = "no_historical_elite_for_knowledge"
 
-            best_score_history.append({"iter": t + 1, "score": float(gBestScore)})
+            rdk_guidance_history.append({"iter": t + 1, "score": float(gBestScore)})
             best_decoded_signature_history.append({"iter": t + 1, "signature": gBestDecodedSignature})
-            best_structural_signature_history.append(
-                {"iter": t + 1, "signature": machine_order_signatures[best_idx]}
-            )
-
-            fitness_plateau, improvement_window = detect_fitness_plateau(
-                best_score_history,
-                stagnation_patience,
-                eps_improve,
-            )
-            if fitness_plateau:
-                plateau_check_streak += 1
-            else:
-                plateau_check_streak = 0
-            structural_stagnation, structural_details = detect_structural_stagnation(
-                machine_order_signatures=machine_order_signatures,
-                ranking_signatures=ranking_signatures,
-                decoded_signatures=decoded_signatures,
-                gbest_decoded_signature=gBestDecodedSignature,
-                population_size=N,
-                machine_family_threshold=machine_family_threshold,
-                ranking_collapse_threshold=ranking_collapse_threshold,
-                structural_distance_threshold=structural_distance_threshold,
-                unique_schedule_threshold=unique_schedule_threshold,
-                dup_ratio_threshold=dup_ratio_threshold,
-                use_machine_order_signature=use_machine_order_signature,
-                use_ranking_similarity=use_ranking_similarity,
-            )
-
-            stagnation_score = compute_stagnation_score(
-                fitness_plateau_score=1.0 if fitness_plateau else 0.0,
-                machine_order_collapse_score=1.0 if structural_details["machine_order_collapse"] else 0.0,
-                ranking_collapse_score=1.0 if structural_details["ranking_collapse"] else 0.0,
-                schedule_collapse_score=1.0 if structural_details["schedule_collapse"] else 0.0,
-                gbest_dup_collapse_score=1.0 if structural_details["gbest_dup_collapse"] else 0.0,
-                stagnation_score_weights=stagnation_score_weights,
-            )
-            stagnated = should_activate_ssr(
-                fitness_plateau=fitness_plateau,
-                structural_stagnation=structural_stagnation,
-                stagnation_score=stagnation_score,
-                stagnation_mode=stagnation_mode,
-                stagnation_score_threshold=stagnation_score_threshold,
-            )
-            plateau_only_stagnated = (
-                ssr_allow_plateau_activation
-                and plateau_check_streak >= max(1, int(ssr_min_plateau_checks))
-            )
-            structural_collapse = bool(
-                structural_details["machine_order_collapse"]
-                or structural_details["ranking_collapse"]
-                or structural_details["schedule_collapse"]
-                or structural_details["gbest_dup_collapse"]
-            )
-            unique_ranking_count = int(len(set(ranking_signatures)))
-            exploit_unique_rank_limit = _resolve_count_threshold(
-                ssr_exploit_max_unique_rank_ratio,
-                N,
-            )
-            exploit_machine_family_limit = _resolve_count_threshold(
-                ssr_exploit_max_machine_family_ratio,
-                N,
-            )
-            rank_population_collapsed = unique_ranking_count <= exploit_unique_rank_limit
-            machine_population_collapsed = (
-                structural_details["unique_machine_families"] <= exploit_machine_family_limit
-            )
-            gbest_population_collapsed = (
-                structural_details["dup_ratio_to_gbest"] >= ssr_exploit_min_dup_ratio
-            )
-            strong_structural_collapse = bool(
-                structural_collapse
-                and (
-                    (rank_population_collapsed and machine_population_collapsed)
-                    or gbest_population_collapsed
-                )
-            )
-            cooldown_blocked = ssr_cooldown_remaining > 0
-            if cooldown_blocked:
-                ssr_cooldown_remaining = max(0, ssr_cooldown_remaining - 1)
-            remaining_checks = (max_iter - (t + 1)) // max(1, IT)
-            tail_blocked = remaining_checks < max(0, int(ssr_skip_last_checks))
-
-            if ssr_adaptive_mode:
-                force_escape_after_failed_exploit = bool(
-                    ssr_force_escape_after_failed_exploit
-                    and last_ssr_failed_mode == "exploit"
-                    and fitness_plateau
-                    and plateau_only_stagnated
-                )
-                exploit_ready = bool(
-                    stagnated
-                    and fitness_plateau
-                    and strong_structural_collapse
-                    and not force_escape_after_failed_exploit
-                )
-                escape_ready = bool(
-                    fitness_plateau
-                    and plateau_only_stagnated
-                    and (not strong_structural_collapse or force_escape_after_failed_exploit)
-                )
-                if ssr_no_improve_streak >= max(1, int(ssr_escape_after_failed_activations)):
-                    escape_ready = bool(fitness_plateau and plateau_only_stagnated)
-                    exploit_ready = False
-
-                if tail_blocked:
-                    stagnated = False
-                    ssr_skip_reason = "tail"
-                elif cooldown_blocked:
-                    stagnated = False
-                    ssr_skip_reason = "cooldown"
-                elif exploit_ready:
-                    stagnated = True
-                    ssr_search_mode = "exploit"
-                elif escape_ready:
-                    stagnated = True
-                    ssr_search_mode = "escape"
-                else:
-                    stagnated = False
-            else:
-                stagnated = bool(stagnated or plateau_only_stagnated)
-                if tail_blocked:
-                    stagnated = False
-                    ssr_skip_reason = "tail"
-                elif cooldown_blocked:
-                    stagnated = False
-                    ssr_skip_reason = "cooldown"
-                elif structural_stagnation:
-                    ssr_search_mode = "exploit"
-                elif plateau_only_stagnated:
-                    ssr_search_mode = "escape"
-
-            activation_parts = []
-            if fitness_plateau:
-                activation_parts.append("fitness_plateau")
-            if structural_details["machine_order_collapse"]:
-                activation_parts.append("machine_order_collapse")
-            if structural_details["ranking_collapse"]:
-                activation_parts.append("ranking_collapse")
-            if structural_details["schedule_collapse"]:
-                activation_parts.append("schedule_collapse")
-            if structural_details["gbest_dup_collapse"]:
-                activation_parts.append("gbest_dup_collapse")
-            if plateau_only_stagnated and not structural_stagnation:
-                activation_parts.append("plateau_only")
-            if ssr_search_mode != "none":
-                activation_parts.append(f"ssr_{ssr_search_mode}")
-            if ssr_skip_reason:
-                activation_parts.append(f"skip_{ssr_skip_reason}")
-
-            stagnation_details.update(structural_details)
-            stagnation_details.update(
-                {
-                    "improvement_window": improvement_window,
-                    "fitness_plateau": bool(fitness_plateau),
-                    "plateau_check_streak": int(plateau_check_streak),
-                    "structural_stagnation": bool(structural_stagnation),
-                    "stagnation_score": float(stagnation_score),
-                    "activation_reason": "+".join(activation_parts) if stagnated else "not_activated",
-                    "ssr_search_mode": ssr_search_mode,
-                    "ssr_skip_reason": ssr_skip_reason,
-                    "ssr_no_improve_streak": int(ssr_no_improve_streak),
-                    "ssr_cooldown_remaining": int(ssr_cooldown_remaining),
-                    "strong_structural_collapse": bool(strong_structural_collapse),
-                    "last_ssr_failed_mode": last_ssr_failed_mode,
-                }
-            )
 
             feasible_count_before = int(
                 sum(
@@ -1314,286 +835,6 @@ def CAOA_SSR(
                 )
             ) if decoder_available else 0
             infeasible_count_before = N - feasible_count_before if decoder_available else 0
-
-            if stagnated and decoder_available:
-                ssr_best_before_activation = float(gBestScore)
-                effective_reduction_width_scale = ssr_reduction_width_scale
-                effective_reduced_gbest_pull = ssr_reduced_gbest_pull
-                effective_explore_dim_ratio = ssr_explore_dim_ratio
-                effective_gaussian_scale = max(
-                    ssr_knowledge_min_noise_scale,
-                    0.25 * ssr_knowledge_noise_scale,
-                )
-                if ssr_search_mode == "escape":
-                    effective_reduction_width_scale *= ssr_escape_reduction_width_multiplier
-                    effective_reduced_gbest_pull = ssr_escape_gbest_pull
-                    effective_explore_dim_ratio = ssr_escape_dim_ratio
-                    effective_gaussian_scale *= ssr_escape_noise_multiplier
-
-                protected_elite_indices = set(
-                    _select_protected_elite_indices(
-                        fitness=fitness,
-                        archive_signatures=archive_signatures,
-                        elite_size=elite_size,
-                    )
-                )
-                active_restart_ratio = partial_restart_ratio
-                if ssr_search_mode == "exploit":
-                    active_restart_ratio = min(partial_restart_ratio, ssr_exploit_restart_ratio)
-                restart_budget = int(math.ceil(active_restart_ratio * N))
-                replace_indices, ssr_infeasible_replaced, ssr_worst_feasible_replaced = (
-                    _select_ssr_replacement_indices(
-                        fitness=fitness,
-                        metrics_list=metrics_list,
-                        protected_indices=protected_elite_indices,
-                        restart_budget=restart_budget,
-                        decoder_available=decoder_available,
-                        missing_feasibility_is_feasible=missing_feasibility_is_feasible,
-                    )
-                )
-
-                priority_knowledge = None
-                if operation_reference_valid:
-                    priority_knowledge = _build_operation_priority_knowledge_from_archive(
-                        elite_archive=elite_archive[: max(1, ssr_elite_k)],
-                        decoder=decoder,
-                        operation_reference=operation_reference,
-                    )
-                    if priority_knowledge is not None:
-                        knowledge_signal_ratio = priority_knowledge["signal_ratio"]
-                        knowledge_confidence_mean = priority_knowledge["confidence_mean"]
-                        matched_operation_count = priority_knowledge["matched_count"]
-                        total_operation_count = priority_knowledge["total_count"]
-                    if (
-                        priority_knowledge is not None
-                        and knowledge_signal_ratio < ssr_min_knowledge_signal_ratio
-                    ):
-                        priority_knowledge = None
-
-                if not operation_reference_valid:
-                    stagnation_details["knowledge_warning"] = operation_reference_error
-                elif not elite_archive:
-                    stagnation_details["knowledge_warning"] = "no_historical_elite_for_knowledge"
-                elif priority_knowledge is None:
-                    if knowledge_signal_ratio < ssr_min_knowledge_signal_ratio:
-                        stagnation_details["knowledge_warning"] = (
-                            f"low_knowledge_signal:{knowledge_signal_ratio:.3f}"
-                        )
-                    else:
-                        stagnation_details["knowledge_warning"] = "knowledge_unavailable"
-
-                dimensional_guidance = None
-                if ssr_balanced_reinit:
-                    dimensional_guidance = _build_dimensional_search_guidance(
-                        pos=pos,
-                        fitness=fitness,
-                        elite_archive=elite_archive[: max(1, ssr_elite_k)],
-                        gbest=gBest,
-                        lb=lb,
-                        ub=ub,
-                        elite_k=max(1, ssr_elite_k),
-                        min_width_ratio=ssr_reduction_min_width,
-                        width_scale=effective_reduction_width_scale,
-                    )
-
-                for replace_order, idx in enumerate(replace_indices):
-                    if max_FEs is not None and fe_counter >= max_FEs:
-                        break
-                    best_candidate_pos = None
-                    best_candidate_evaluation = None
-                    best_candidate_fit = float("inf")
-                    best_candidate_source = None
-                    best_by_source = {}
-                    preferred_source = None
-                    diversity_quota = (
-                        ssr_escape_diversity_quota
-                        if ssr_search_mode == "escape"
-                        else ssr_exploit_diversity_quota
-                    )
-                    if (
-                        ssr_balanced_reinit
-                        and dimensional_guidance is not None
-                        and diversity_replacement_count < max(0, int(diversity_quota))
-                    ):
-                        preferred_source = "diversity"
-                    elif ssr_balanced_reinit and ssr_force_mode_quota:
-                        source_cycle = replace_order % 3
-                        if source_cycle == 0 and priority_knowledge is not None:
-                            preferred_source = "knowledge"
-                        elif source_cycle == 1 and dimensional_guidance is not None:
-                            preferred_source = "reduced"
-                        elif dimensional_guidance is not None:
-                            preferred_source = "diversity"
-
-                    for trial_idx in range(max(1, int(ssr_candidate_trials))):
-                        if max_FEs is not None and fe_counter >= max_FEs:
-                            break
-                        candidate_source = None
-                        candidate_pos = None
-                        if preferred_source is not None:
-                            source_order = [preferred_source]
-                        elif ssr_search_mode == "escape":
-                            source_order = ["diversity", "reduced", "knowledge"]
-                            source_order = source_order[trial_idx % 3 :] + source_order[: trial_idx % 3]
-                        else:
-                            source_order = ["knowledge", "reduced", "diversity"]
-                            source_order = source_order[trial_idx % 3 :] + source_order[: trial_idx % 3]
-                        if ssr_random_fallback:
-                            source_order.append("random")
-
-                        for source_name in source_order:
-                            if source_name == "knowledge" and priority_knowledge is not None:
-                                candidate_pos = _generate_random_key_agent_from_priority_knowledge(
-                                    priority_knowledge=priority_knowledge,
-                                    lb=lb,
-                                    ub=ub,
-                                    base_noise_scale=ssr_knowledge_noise_scale,
-                                    uniform_mix=ssr_knowledge_uniform_mix,
-                                    min_noise_scale=ssr_knowledge_min_noise_scale,
-                                    max_confidence=ssr_knowledge_max_confidence,
-                                )
-                                candidate_source = "knowledge"
-                            elif source_name == "reduced" and dimensional_guidance is not None:
-                                candidate_pos = _generate_reduced_space_candidate(
-                                    guidance=dimensional_guidance,
-                                    lb=lb,
-                                    ub=ub,
-                                    gbest_pull=effective_reduced_gbest_pull,
-                                    uncertain_uniform_ratio=ssr_uncertain_uniform_ratio,
-                                )
-                                candidate_source = "reduced"
-                            elif source_name == "diversity" and dimensional_guidance is not None:
-                                candidate_pos = _generate_diversity_exploration_candidate(
-                                    guidance=dimensional_guidance,
-                                    lb=lb,
-                                    ub=ub,
-                                    dim_ratio=effective_explore_dim_ratio,
-                                    opposition_ratio=ssr_explore_opposition_ratio,
-                                    gaussian_scale=effective_gaussian_scale,
-                                )
-                                candidate_source = "diversity"
-                            elif source_name == "random" and ssr_random_fallback:
-                                candidate_pos = _plain_random_position(lb, ub)
-                                candidate_source = "random"
-
-                            if candidate_pos is not None:
-                                break
-
-                        if candidate_pos is None:
-                            continue
-
-                        candidate_evaluation = _evaluate_candidate(candidate_pos, fobj=fobj, decoder=decoder)
-                        candidate_fit = candidate_evaluation["fitness"]
-                        fe_counter += 1
-                        ssr_candidate_attempt_count += 1
-                        if candidate_source == "knowledge":
-                            knowledge_candidate_count += 1
-                        elif candidate_source == "reduced":
-                            reduced_space_candidate_count += 1
-                        elif candidate_source == "diversity":
-                            diversity_candidate_count += 1
-                        source_best = best_by_source.get(candidate_source)
-                        if source_best is None or candidate_fit < source_best[0]:
-                            best_by_source[candidate_source] = (
-                                candidate_fit,
-                                candidate_pos,
-                                candidate_evaluation,
-                            )
-                        if candidate_fit < best_candidate_fit:
-                            best_candidate_pos = candidate_pos
-                            best_candidate_evaluation = candidate_evaluation
-                            best_candidate_fit = candidate_fit
-                            best_candidate_source = candidate_source
-
-                    if best_candidate_evaluation is None:
-                        continue
-
-                    escape_accept_margin = max(0.0, float(ssr_escape_accept_margin_ratio))
-                    if ssr_search_mode == "escape" and "diversity" in best_by_source:
-                        diversity_fit, diversity_pos, diversity_evaluation = best_by_source["diversity"]
-                        if diversity_fit <= fitness[idx] * (1.0 + escape_accept_margin):
-                            best_candidate_fit = diversity_fit
-                            best_candidate_pos = diversity_pos
-                            best_candidate_evaluation = diversity_evaluation
-                            best_candidate_source = "diversity"
-                    allow_escape_diversity_accept = (
-                        ssr_search_mode == "escape"
-                        and best_candidate_source == "diversity"
-                        and best_candidate_fit <= fitness[idx] * (1.0 + escape_accept_margin)
-                    )
-                    if (
-                        ssr_accept_only_improvement
-                        and best_candidate_fit >= fitness[idx]
-                        and not allow_escape_diversity_accept
-                    ):
-                        ssr_rejected_candidate_count += 1
-                        continue
-                    if (
-                        ssr_commit_requires_gbest_improvement
-                        and best_candidate_fit >= gBestScore - eps_improve
-                    ):
-                        ssr_rejected_candidate_count += 1
-                        continue
-
-                    pos[idx] = best_candidate_pos
-                    evaluation = best_candidate_evaluation
-                    _build_evaluation_metadata(evaluation, pos[idx])
-                    if best_candidate_source == "knowledge":
-                        knowledge_replacement_count += 1
-                    elif best_candidate_source == "reduced":
-                        reduced_space_replacement_count += 1
-                    elif best_candidate_source == "diversity":
-                        diversity_replacement_count += 1
-                    else:
-                        ssr_fallback_random_count += 1
-
-                    energies[idx] = initial_energy
-                    fitness[idx] = evaluation["fitness"]
-                    evaluations[idx] = evaluation
-                    schedule_dfs[idx] = evaluation["schedule_df"]
-                    metrics_list[idx] = evaluation["metrics"]
-                    decoded_signatures[idx] = evaluation["decoded_signature"]
-                    machine_order_signatures[idx] = evaluation["machine_order_signature"]
-                    ranking_signatures[idx] = evaluation["ranking_signature"]
-                    ssr_replacement_count += 1
-
-                best_idx = int(np.argmin(fitness))
-                if fitness[best_idx] < gBestScore:
-                    gBestScore = float(fitness[best_idx])
-                    gBest = pos[best_idx].copy()
-                    gBestDecodedSignature = decoded_signatures[best_idx]
-
-                archive_signatures = [
-                    machine_sig if machine_sig is not None else decoded_sig
-                    for machine_sig, decoded_sig in zip(machine_order_signatures, decoded_signatures)
-                ]
-                elite_archive = _update_elite_archive(
-                    elite_archive,
-                    pos,
-                    fitness,
-                    evaluations,
-                    archive_signatures,
-                    elite_size,
-                )
-                ssr_triggered = True
-                if gBestScore < ssr_best_before_activation - eps_improve:
-                    ssr_no_improve_streak = 0
-                    ssr_failure_reference_best = float(gBestScore)
-                    last_ssr_failed_mode = None
-                else:
-                    ssr_no_improve_streak += 1
-                    ssr_failure_reference_best = min(
-                        ssr_failure_reference_best,
-                        ssr_best_before_activation,
-                    )
-                    last_ssr_failed_mode = ssr_search_mode
-                ssr_cooldown_remaining = max(
-                    ssr_cooldown_remaining,
-                    max(0, int(ssr_cooldown_checks)),
-                )
-                stagnation_details["ssr_no_improve_streak"] = int(ssr_no_improve_streak)
-                stagnation_details["ssr_cooldown_remaining"] = int(ssr_cooldown_remaining)
-                stagnation_details["last_ssr_failed_mode"] = last_ssr_failed_mode
 
             feasible_count_after = int(
                 sum(
@@ -1610,8 +851,12 @@ def CAOA_SSR(
                 "unique_ranking_count": int(len(set(ranking_signatures))),
                 "unique_schedule_count": int(len(set(sig for sig in decoded_signatures if sig is not None))),
                 "unique_machine_family_count": int(len(set(sig for sig in machine_order_signatures if sig is not None))),
-                "avg_machine_order_distance": float(structural_details["avg_machine_order_distance"]),
-                "avg_ranking_distance": float(structural_details["avg_ranking_distance"]),
+                "avg_machine_order_distance": float(
+                    _average_pairwise_distance(machine_order_signatures, compute_machine_order_distance)
+                ),
+                "avg_ranking_distance": float(
+                    _average_pairwise_distance(ranking_signatures, compute_kendall_distance)
+                ),
                 "dup_ratio_to_gbest": float(
                     sum(sig == gBestDecodedSignature for sig in decoded_signatures) / max(1, N)
                 ),
@@ -1642,10 +887,7 @@ def CAOA_SSR(
         log_entry = {
             "iter": t + 1,
             "best_fitness": float(gBestScore),
-            "ssr_check_iter": bool(check_this_iter),
-            "improvement_window": stagnation_details.get("improvement_window"),
-            "fitness_plateau": bool(stagnation_details.get("fitness_plateau", False)),
-            "plateau_check_streak": int(stagnation_details.get("plateau_check_streak", plateau_check_streak)),
+            "rdk_check_iter": bool(check_this_iter),
             "unique_ranking_count": int(cached_check_metrics["unique_ranking_count"]),
             "unique_schedule_count": int(cached_check_metrics["unique_schedule_count"]),
             "unique_machine_order_families": int(cached_check_metrics["unique_machine_family_count"]),
@@ -1654,43 +896,17 @@ def CAOA_SSR(
             "dup_ratio_to_gbest": float(cached_check_metrics["dup_ratio_to_gbest"]),
             "feasible_count": int(feasible_count),
             "infeasible_count": int(infeasible_count),
-            "machine_order_collapse": bool(stagnation_details.get("machine_order_collapse", False)),
-            "ranking_collapse": bool(stagnation_details.get("ranking_collapse", False)),
-            "schedule_collapse": bool(stagnation_details.get("schedule_collapse", False)),
-            "gbest_dup_collapse": bool(stagnation_details.get("gbest_dup_collapse", False)),
-            "structural_stagnation": bool(stagnation_details.get("structural_stagnation", False)),
-            "stagnation_score": float(stagnation_details.get("stagnation_score", 0.0)),
-            "ssr_activation_reason": stagnation_details.get("activation_reason", "skipped_until_it"),
-            "ssr_search_mode": stagnation_details.get("ssr_search_mode", ssr_search_mode),
-            "ssr_skip_reason": stagnation_details.get("ssr_skip_reason", ssr_skip_reason),
-            "ssr_no_improve_streak": int(stagnation_details.get("ssr_no_improve_streak", ssr_no_improve_streak)),
-            "ssr_cooldown_remaining": int(stagnation_details.get("ssr_cooldown_remaining", ssr_cooldown_remaining)),
-            "strong_structural_collapse": bool(stagnation_details.get("strong_structural_collapse", False)),
-            "last_ssr_failed_mode": stagnation_details.get("last_ssr_failed_mode", last_ssr_failed_mode),
-            "reinitialized": int(energy_reinit_count + deterioration_reinit_count + ssr_replacement_count),
+            "reinitialized": int(energy_reinit_count + deterioration_reinit_count),
             "energy_reinit": int(energy_reinit_count),
             "deterioration_reinit": int(deterioration_reinit_count),
-            "ssr_active": bool(ssr_triggered),
-            "ssr_replacement_count": int(ssr_replacement_count),
-            "ssr_candidate_attempt_count": int(ssr_candidate_attempt_count),
-            "ssr_rejected_candidate_count": int(ssr_rejected_candidate_count),
-            "knowledge_replacement_count": int(knowledge_replacement_count),
-            "reduced_space_replacement_count": int(reduced_space_replacement_count),
-            "diversity_replacement_count": int(diversity_replacement_count),
-            "knowledge_candidate_count": int(knowledge_candidate_count),
-            "reduced_space_candidate_count": int(reduced_space_candidate_count),
-            "diversity_candidate_count": int(diversity_candidate_count),
             "inline_reduced_dim_count": int(inline_reduced_dim_count),
             "inline_explore_dim_count": int(inline_explore_dim_count),
             "inline_knowledge_reinit_count": int(inline_knowledge_reinit_count),
-            "ssr_infeasible_replaced": int(ssr_infeasible_replaced),
-            "ssr_worst_feasible_replaced": int(ssr_worst_feasible_replaced),
             "knowledge_signal_ratio": float(knowledge_signal_ratio),
             "knowledge_confidence_mean": float(knowledge_confidence_mean),
             "matched_operation_count": int(matched_operation_count),
             "total_operation_count": int(total_operation_count),
-            "used_knowledge_reinit": bool(knowledge_replacement_count > 0),
-            "ssr_fallback_random_count": int(ssr_fallback_random_count),
+            "used_inline_knowledge_reinit": bool(inline_knowledge_reinit_count > 0),
             "feasible_count_before": int(feasible_count_before),
             "feasible_count_after": int(feasible_count_after),
             "infeasible_count_before": int(infeasible_count_before),
@@ -1698,7 +914,7 @@ def CAOA_SSR(
             "operation_reference_valid": bool(operation_reference_valid),
             "operation_reference_error": operation_reference_error,
             "operation_reference_len": int(len(operation_reference)),
-            "knowledge_warning": stagnation_details.get("knowledge_warning"),
+            "knowledge_warning": knowledge_warning,
             "fe_counter": int(fe_counter),
             "iter_time_sec": float(iter_time),
             "total_time_sec": float(total_time),
@@ -1713,19 +929,14 @@ def CAOA_SSR(
                 f"Infeasible: {infeasible_count} | "
                 f"UniqueRank: {cached_check_metrics['unique_ranking_count']} | "
                 f"MachineFam: {cached_check_metrics['unique_machine_family_count']} | "
-                f"SSR: {ssr_triggered} | "
-                f"SSRPolicy: {stagnation_details.get('ssr_search_mode', ssr_search_mode)} | "
-                f"SSRReplace: {ssr_replacement_count} | "
-                f"SSRReject: {ssr_rejected_candidate_count} | "
-                f"SSRMode K/R/D: {knowledge_replacement_count}/{reduced_space_replacement_count}/{diversity_replacement_count} | "
-                f"SSRCand K/R/D: {knowledge_candidate_count}/{reduced_space_candidate_count}/{diversity_candidate_count} | "
-                f"Inline R/D/K: {inline_reduced_dim_count}/{inline_explore_dim_count}/{inline_knowledge_reinit_count} | "
+                f"RDK R/D/K: {inline_reduced_dim_count}/{inline_explore_dim_count}/{inline_knowledge_reinit_count} | "
                 f"EReinit: {energy_reinit_count} | "
                 f"DReinit: {deterioration_reinit_count} | "
                 f"KSignal: {knowledge_signal_ratio:.2f} | "
                 f"KConf: {knowledge_confidence_mean:.2f} | "
                 f"FEs: {fe_counter} | "
-                f"Time: {iter_time:.4f}s"
+                f"Iter time: {iter_time:.4f}s | "
+                f"Total time: {total_time:.4f}s"
             )
 
     outputs = (
@@ -1738,9 +949,8 @@ def CAOA_SSR(
         extra = {
             "logs": diagnostics,
             "elite_archive": elite_archive,
-            "best_score_history": best_score_history,
+            "rdk_guidance_history": rdk_guidance_history,
             "best_decoded_signature_history": best_decoded_signature_history,
-            "best_structural_signature_history": best_structural_signature_history,
         }
         return outputs + (extra,)
     return outputs

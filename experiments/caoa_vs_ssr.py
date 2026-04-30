@@ -129,9 +129,7 @@ class RunResult:
     runtime_seconds: float
     feasible: bool
     fe_count: Optional[int] = None
-    ssr_checks: Optional[int] = None
-    ssr_activated_count: Optional[int] = None
-    ssr_replacement_total: Optional[int] = None
+    rdk_checks: Optional[int] = None
     inline_reduced_dim_total: Optional[int] = None
     inline_explore_dim_total: Optional[int] = None
     inline_knowledge_reinit_total: Optional[int] = None
@@ -160,31 +158,13 @@ def build_caoa_params(dim: int, max_iter: int, population_size: int) -> Dict[str
 def build_caoassr_params(it_period: int = 10) -> Dict[str, Any]:
     return {
         "IT": it_period,
-        "K": it_period * 3,
-        "stagnation_window": it_period * 3,
-        "stagnation_patience": 1,
-        "eps_improve": 1e-8,
         "elite_size": 5,
-        "dup_ratio_threshold": 0.60,
-        "unique_schedule_threshold": 0.25,
-        "machine_family_threshold": 0.70,
-        "ranking_collapse_threshold": 0.08,
-        "structural_distance_threshold": 0.25,
-        "use_machine_order_signature": True,
-        "use_ranking_similarity": True,
-        "stagnation_mode": "rule",
-        "partial_restart_ratio": 0.0,
         "ssr_elite_k": 5,
         "ssr_min_knowledge_signal_ratio": 0.80,
         "ssr_knowledge_noise_scale": 0.12,
         "ssr_knowledge_min_noise_scale": 0.02,
         "ssr_knowledge_max_confidence": 0.85,
         "ssr_knowledge_uniform_mix": 0.20,
-        "ssr_allow_plateau_activation": True,
-        "ssr_min_plateau_checks": 6,
-        "ssr_candidate_trials": 3,
-        "ssr_accept_only_improvement": True,
-        "ssr_commit_requires_gbest_improvement": True,
         "ssr_inline_guidance": True,
         "ssr_inline_prob": 0.20,
         "ssr_inline_confidence_threshold": 0.70,
@@ -192,31 +172,10 @@ def build_caoassr_params(it_period: int = 10) -> Dict[str, Any]:
         "ssr_inline_reduced_blend": 0.25,
         "ssr_inline_explore_dim_ratio": 0.05,
         "ssr_inline_reinit_uses_knowledge": True,
-        "ssr_random_fallback": False,
         "ssr_balanced_reinit": True,
-        "ssr_explore_dim_ratio": 0.30,
         "ssr_explore_opposition_ratio": 0.50,
         "ssr_reduction_min_width": 0.05,
         "ssr_reduction_width_scale": 2.0,
-        "ssr_reduced_gbest_pull": 0.40,
-        "ssr_uncertain_uniform_ratio": 0.25,
-        "ssr_force_mode_quota": False,
-        "ssr_adaptive_mode": True,
-        "ssr_escape_after_failed_activations": 1,
-        "ssr_cooldown_checks": 1,
-        "ssr_skip_last_checks": 1,
-        "ssr_escape_reduction_width_multiplier": 1.8,
-        "ssr_escape_noise_multiplier": 1.7,
-        "ssr_escape_dim_ratio": 0.45,
-        "ssr_escape_gbest_pull": 0.15,
-        "ssr_escape_accept_margin_ratio": 0.02,
-        "ssr_force_escape_after_failed_exploit": True,
-        "ssr_exploit_max_unique_rank_ratio": 0.80,
-        "ssr_exploit_max_machine_family_ratio": 0.80,
-        "ssr_exploit_min_dup_ratio": 0.35,
-        "ssr_exploit_restart_ratio": 0.0,
-        "ssr_exploit_diversity_quota": 0,
-        "ssr_escape_diversity_quota": 2,
     }
 
 
@@ -300,17 +259,13 @@ def _sum_diag_key(diagnostics: List[Dict[str, Any]], key: str) -> int:
     return total
 
 
-def _get_ssr_logs(ssr_info: Dict[str, Any]) -> List[Dict[str, Any]]:
-    if not isinstance(ssr_info, dict):
+def _get_rdk_logs(rdk_info: Dict[str, Any]) -> List[Dict[str, Any]]:
+    if not isinstance(rdk_info, dict):
         return []
-    logs = ssr_info.get("logs")
+    logs = rdk_info.get("logs")
     if logs is None:
-        logs = ssr_info.get("diagnostics", [])
+        logs = rdk_info.get("diagnostics", [])
     return logs if isinstance(logs, list) else []
-
-
-def _is_ssr_active_log(item: Dict[str, Any]) -> bool:
-    return bool(item.get("ssr_active", item.get("ssr_triggered", False)))
 
 
 def run_caoassr_once(
@@ -327,7 +282,7 @@ def run_caoassr_once(
     decoder = make_decoder(df_ops, df_machine_master, df_job_target, tidal_checker)
     dim = len(df_ops)
     caoa_params = build_caoa_params(dim=dim, max_iter=max_iter, population_size=population_size)
-    ssr_params = build_caoassr_params(it_period=10)
+    rdk_params = build_caoassr_params(it_period=10)
 
     start = time.perf_counter()
     try:
@@ -337,19 +292,20 @@ def run_caoassr_once(
                 decoder=decoder,
                 return_diagnostics=True,
                 verbose=False,
-                **ssr_params,
+                **rdk_params,
             )
-        # Expected:
-        #   best_score, best_position, cg_curve, avg_curve, ssr_info
         best_position = result[1]
-        ssr_info = result[4] if len(result) > 4 else {}
+        rdk_info = result[4] if len(result) > 4 else {}
         schedule_df, metrics = decoder.decode_from_continuous(best_position)
         ensure_feasible(metrics, "CAOASSR")
         runtime = time.perf_counter() - start
 
-        diagnostics = _get_ssr_logs(ssr_info)
-        best_score_history = ssr_info.get("best_score_history", []) if isinstance(ssr_info, dict) else []
-        ssr_activated_count = sum(1 for item in diagnostics if _is_ssr_active_log(item))
+        diagnostics = _get_rdk_logs(rdk_info)
+        guidance_history = (
+            rdk_info.get("rdk_guidance_history", [])
+            if isinstance(rdk_info, dict)
+            else []
+        )
 
         return RunResult(
             seed=seed,
@@ -358,9 +314,7 @@ def run_caoassr_once(
             max_tardiness=float(metrics.get("max_tardiness", float("nan"))),
             runtime_seconds=float(runtime),
             feasible=bool(metrics.get("is_feasible", True)),
-            ssr_checks=len(best_score_history),
-            ssr_activated_count=int(ssr_activated_count),
-            ssr_replacement_total=_sum_diag_key(diagnostics, "ssr_replacement_count"),
+            rdk_checks=len(guidance_history),
             inline_reduced_dim_total=_sum_diag_key(diagnostics, "inline_reduced_dim_count"),
             inline_explore_dim_total=_sum_diag_key(diagnostics, "inline_explore_dim_count"),
             inline_knowledge_reinit_total=_sum_diag_key(diagnostics, "inline_knowledge_reinit_count"),
@@ -510,9 +464,7 @@ def build_summary(
                 "total_tardiness": describe(ssr_tt),
                 "max_tardiness": describe([r.max_tardiness for r in by_alg["CAOASSR"]]),
                 "runtime_seconds": describe([r.runtime_seconds for r in by_alg["CAOASSR"]]),
-                "ssr_checks": describe([r.ssr_checks or 0 for r in by_alg["CAOASSR"]]),
-                "ssr_activated_count": describe([r.ssr_activated_count or 0 for r in by_alg["CAOASSR"]]),
-                "ssr_replacement_total": describe([r.ssr_replacement_total or 0 for r in by_alg["CAOASSR"]]),
+                "rdk_checks": describe([r.rdk_checks or 0 for r in by_alg["CAOASSR"]]),
                 "inline_reduced_dim_total": describe([r.inline_reduced_dim_total or 0 for r in by_alg["CAOASSR"]]),
                 "inline_explore_dim_total": describe([r.inline_explore_dim_total or 0 for r in by_alg["CAOASSR"]]),
                 "inline_knowledge_reinit_total": describe([r.inline_knowledge_reinit_total or 0 for r in by_alg["CAOASSR"]]),
@@ -679,9 +631,7 @@ def main() -> None:
             "caoassr_max_tardiness": ssr.max_tardiness if ssr else float("nan"),
             "caoa_runtime_seconds": caoa.runtime_seconds if caoa else float("nan"),
             "caoassr_runtime_seconds": ssr.runtime_seconds if ssr else float("nan"),
-            "caoassr_ssr_checks": ssr.ssr_checks if ssr else None,
-            "caoassr_ssr_activated_count": ssr.ssr_activated_count if ssr else None,
-            "caoassr_ssr_replacement_total": ssr.ssr_replacement_total if ssr else None,
+            "caoassr_rdk_checks": ssr.rdk_checks if ssr else None,
             "caoassr_inline_reduced_dim_total": ssr.inline_reduced_dim_total if ssr else None,
             "caoassr_inline_explore_dim_total": ssr.inline_explore_dim_total if ssr else None,
             "caoassr_inline_knowledge_reinit_total": ssr.inline_knowledge_reinit_total if ssr else None,

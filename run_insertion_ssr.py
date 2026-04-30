@@ -112,12 +112,12 @@ def save_voyage_debug_report(debug_df, output_dir="data/result"):
     return debug_path, summary_path
 
 
-def _get_ssr_logs(ssr_info):
-    if not isinstance(ssr_info, dict):
+def _get_rdk_logs(rdk_info):
+    if not isinstance(rdk_info, dict):
         return []
-    logs = ssr_info.get("logs")
+    logs = rdk_info.get("logs")
     if logs is None:
-        logs = ssr_info.get("diagnostics", [])
+        logs = rdk_info.get("diagnostics", [])
     return logs if isinstance(logs, list) else []
 
 
@@ -131,58 +131,39 @@ def _sum_log_key(logs, key):
     return total
 
 
-def build_ssr_diagnostic_summary(ssr_info):
-    logs = _get_ssr_logs(ssr_info)
-    best_score_history = (
-        ssr_info.get("best_score_history", [])
-        if isinstance(ssr_info, dict)
+def build_rdk_diagnostic_summary(rdk_info):
+    logs = _get_rdk_logs(rdk_info)
+    guidance_history = (
+        rdk_info.get("rdk_guidance_history", [])
+        if isinstance(rdk_info, dict)
         else []
     )
-    activation_reason_counts = {}
-    search_mode_counts = {}
-    for item in logs:
-        reason = item.get("ssr_activation_reason")
-        if reason:
-            activation_reason_counts[reason] = activation_reason_counts.get(reason, 0) + 1
-        mode = item.get("ssr_search_mode")
-        if mode:
-            search_mode_counts[mode] = search_mode_counts.get(mode, 0) + 1
 
     return {
         "log_count": int(len(logs)),
-        "ssr_checks": int(len(best_score_history)),
-        "ssr_active_count": int(
-            sum(
-                1
-                for item in logs
-                if bool(item.get("ssr_active", item.get("ssr_triggered", False)))
-            )
-        ),
-        "ssr_replacement_total": _sum_log_key(logs, "ssr_replacement_count"),
-        "ssr_candidate_attempt_total": _sum_log_key(logs, "ssr_candidate_attempt_count"),
-        "ssr_rejected_candidate_total": _sum_log_key(logs, "ssr_rejected_candidate_count"),
-        "knowledge_replacement_total": _sum_log_key(logs, "knowledge_replacement_count"),
-        "reduced_space_replacement_total": _sum_log_key(logs, "reduced_space_replacement_count"),
-        "diversity_replacement_total": _sum_log_key(logs, "diversity_replacement_count"),
+        "rdk_checks": int(len(guidance_history)),
         "inline_reduced_dim_total": _sum_log_key(logs, "inline_reduced_dim_count"),
         "inline_explore_dim_total": _sum_log_key(logs, "inline_explore_dim_count"),
         "inline_knowledge_reinit_total": _sum_log_key(logs, "inline_knowledge_reinit_count"),
-        "activation_reason_counts": activation_reason_counts,
-        "search_mode_counts": search_mode_counts,
+        "rdk_guidance_total": (
+            _sum_log_key(logs, "inline_reduced_dim_count")
+            + _sum_log_key(logs, "inline_explore_dim_count")
+            + _sum_log_key(logs, "inline_knowledge_reinit_count")
+        ),
     }
 
 
-def save_ssr_diagnostics(ssr_info, output_dir="data/result"):
+def save_rdk_diagnostics(rdk_info, output_dir="data/result"):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    logs_path = output_path / "caoassr_ssr_logs.json"
-    summary_path = output_path / "caoassr_ssr_summary.json"
+    logs_path = output_path / "caoassr_rdk_logs.json"
+    summary_path = output_path / "caoassr_rdk_summary.json"
 
-    logs = _get_ssr_logs(ssr_info)
+    logs = _get_rdk_logs(rdk_info)
     logs_path.write_text(json.dumps(logs, indent=4), encoding="utf-8")
     summary_path.write_text(
-        json.dumps(build_ssr_diagnostic_summary(ssr_info), indent=4),
+        json.dumps(build_rdk_diagnostic_summary(rdk_info), indent=4),
         encoding="utf-8",
     )
 
@@ -365,33 +346,15 @@ def main():
     }
 
     it_period = 10
-    caoa_ssr_params = {
+    caoa_rdk_params = {
         'IT': it_period,
-        'K': it_period * 3,
-        'stagnation_window': it_period * 3,
-        'stagnation_patience': 1,
-        'eps_improve': 1e-8,
         'elite_size': 5,
-        'dup_ratio_threshold': 0.60,
-        'unique_schedule_threshold': 0.25,
-        'machine_family_threshold': 0.70,
-        'ranking_collapse_threshold': 0.08,
-        'structural_distance_threshold': 0.25,
-        'use_machine_order_signature': True,
-        'use_ranking_similarity': True,
-        'stagnation_mode': 'rule',
-        'partial_restart_ratio': 0.0,
         'ssr_elite_k': 5,
         'ssr_min_knowledge_signal_ratio': 0.80,
         'ssr_knowledge_noise_scale': 0.12,
         'ssr_knowledge_min_noise_scale': 0.02,
         'ssr_knowledge_max_confidence': 0.85,
         'ssr_knowledge_uniform_mix': 0.20,
-        'ssr_allow_plateau_activation': True,
-        'ssr_min_plateau_checks': 6,
-        'ssr_candidate_trials': 3,
-        'ssr_accept_only_improvement': True,
-        'ssr_commit_requires_gbest_improvement': True,
         'ssr_inline_guidance': True,
         'ssr_inline_prob': 0.20,
         'ssr_inline_confidence_threshold': 0.70,
@@ -399,38 +362,17 @@ def main():
         'ssr_inline_reduced_blend': 0.25,
         'ssr_inline_explore_dim_ratio': 0.05,
         'ssr_inline_reinit_uses_knowledge': True,
-        'ssr_random_fallback': False,
         'ssr_balanced_reinit': True,
-        'ssr_explore_dim_ratio': 0.30,
         'ssr_explore_opposition_ratio': 0.50,
         'ssr_reduction_min_width': 0.05,
         'ssr_reduction_width_scale': 2.0,
-        'ssr_reduced_gbest_pull': 0.40,
-        'ssr_uncertain_uniform_ratio': 0.25,
-        'ssr_force_mode_quota': False,
-        'ssr_adaptive_mode': True,
-        'ssr_escape_after_failed_activations': 1,
-        'ssr_cooldown_checks': 1,
-        'ssr_skip_last_checks': 1,
-        'ssr_escape_reduction_width_multiplier': 1.8,
-        'ssr_escape_noise_multiplier': 1.7,
-        'ssr_escape_dim_ratio': 0.45,
-        'ssr_escape_gbest_pull': 0.15,
-        'ssr_escape_accept_margin_ratio': 0.02,
-        'ssr_force_escape_after_failed_exploit': True,
-        'ssr_exploit_max_unique_rank_ratio': 0.80,
-        'ssr_exploit_max_machine_family_ratio': 0.80,
-        'ssr_exploit_min_dup_ratio': 0.35,
-        'ssr_exploit_restart_ratio': 0.0,
-        'ssr_exploit_diversity_quota': 0,
-        'ssr_escape_diversity_quota': 2,
     }
 
-    _, best_position, _, _, ssr_info = CAOA_SSR(
+    _, best_position, _, _, rdk_info = CAOA_SSR(
         **caoa_params,
         decoder=decoder,
         return_diagnostics=True,
-        **caoa_ssr_params,
+        **caoa_rdk_params,
     )
 
     caoa_schedule_df, caoa_metrics = decoder.decode_from_continuous(best_position)
@@ -440,7 +382,7 @@ def main():
         caoa_metrics,
         best_position,
     )
-    ssr_logs_path, ssr_summary_path = save_ssr_diagnostics(ssr_info)
+    rdk_logs_path, rdk_summary_path = save_rdk_diagnostics(rdk_info)
     voyage_debug_df = build_voyage_debug_report(
         caoa_schedule_df,
         df_job_target,
@@ -474,22 +416,21 @@ def main():
     print(f"- Timetable : {timetable_path}")
     print(f"- Metrics   : {metrics_path}")
     print(f"- Best pos  : {position_path}")
-    print(f"- SSR logs  : {ssr_logs_path}")
-    print(f"- SSR sum   : {ssr_summary_path}")
+    print(f"- RDK logs  : {rdk_logs_path}")
+    print(f"- RDK sum   : {rdk_summary_path}")
     print(f"- Debug CSV : {voyage_debug_path}")
     print(f"- Debug sum : {voyage_summary_path}")
     print(f"- Compare V : {voyage_comparison_path}")
     print(f"- Compare O : {operation_comparison_path}")
-    ssr_summary = build_ssr_diagnostic_summary(ssr_info)
-    print(f"- SSR checks: {ssr_summary['ssr_checks']}")
-    print(f"- SSR active: {ssr_summary['ssr_active_count']}")
-    print(f"- SSR replace: {ssr_summary['ssr_replacement_total']}")
+    rdk_summary = build_rdk_diagnostic_summary(rdk_info)
+    print(f"- RDK checks: {rdk_summary['rdk_checks']}")
     print(
-        "- Inline R/D/K: "
-        f"{ssr_summary['inline_reduced_dim_total']}/"
-        f"{ssr_summary['inline_explore_dim_total']}/"
-        f"{ssr_summary['inline_knowledge_reinit_total']}"
+        "- RDK R/D/K: "
+        f"{rdk_summary['inline_reduced_dim_total']}/"
+        f"{rdk_summary['inline_explore_dim_total']}/"
+        f"{rdk_summary['inline_knowledge_reinit_total']}"
     )
+    print(f"- RDK total : {rdk_summary['rdk_guidance_total']}")
 
 if __name__ == "__main__":
     main()

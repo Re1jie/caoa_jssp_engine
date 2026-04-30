@@ -1,6 +1,7 @@
 {
     "log_count": 200,
     "ssr_checks": 20,
+    "stagnation_ssr_enabled": false,
     "ssr_active_count": 0,
     "ssr_replacement_total": 0,
     "ssr_candidate_attempt_total": 0,
@@ -11,9 +12,10 @@
     "inline_reduced_dim_total": 10619,
     "inline_explore_dim_total": 10486,
     "inline_knowledge_reinit_total": 437,
+    "rdk_guidance_total": 21542,
     "activation_reason_counts": {
         "skipped_until_it": 180,
-        "not_activated": 20
+        "rdk_only": 20
     },
     "search_mode_counts": {
         "none": 200

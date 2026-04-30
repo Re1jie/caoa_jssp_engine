@@ -106,12 +106,11 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.3, beta=0.1, gamma=0.1, delta=1
         if (t + 1) % 1 == 0 or t == 0:
             print(
                 f"Iterasi {t+1}/{max_iter} | "
-                f"Populasi: {N} | "
                 f"gBest: {gBestScore:.2f} | "
                 f"Rata-rata: {np.mean(fitness):.2f} | "
                 f"FEs: {fe_counter} | "
-                f"Reset (Solution): {solution_reset_count} | "
-                f"Reset (Energy): {depleted_count} | "
+                f"EReinit: {depleted_count} | "
+                f"DReinit: {solution_reset_count} | "
                 f"Iter time: {iter_time:.4f}s | "
                 f"Total time: {total_time:.2f}s"
             )
