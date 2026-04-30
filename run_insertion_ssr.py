@@ -251,7 +251,7 @@ def ensure_feasible(metrics, label: str) -> None:
     )
 
 def main():
-    np.random.seed(42)
+    np.random.seed(10)
     
     # Load Data & Init
     df_ops, df_machine_master, df_job_target = load_real_jssp_data("data/processed/")
@@ -282,8 +282,8 @@ def main():
 
     caoa_params = {
         'N': 20, 'max_iter': 100, 'lb': 0.0, 'ub': 1.0, 'dim': dim,
-        'alpha': 0.9, 'beta': 0.1,
-        'gamma': 0.07, 'delta': 1.2,
+        'alpha': 0.79, 'beta': 0.07,
+        'gamma': 0.06, 'delta': 13.12,
         'initial_energy': 10
     }
 
@@ -303,7 +303,7 @@ def main():
         'use_machine_order_signature': True,
         'use_ranking_similarity': True,
         'stagnation_mode': 'rule',
-        'partial_restart_ratio': 0.20,
+        'partial_restart_ratio': 0.0,
         'ssr_elite_k': 5,
         'ssr_min_knowledge_signal_ratio': 0.80,
         'ssr_knowledge_noise_scale': 0.12,
@@ -311,10 +311,42 @@ def main():
         'ssr_knowledge_max_confidence': 0.85,
         'ssr_knowledge_uniform_mix': 0.20,
         'ssr_allow_plateau_activation': True,
-        'ssr_min_plateau_checks': 4,
+        'ssr_min_plateau_checks': 6,
         'ssr_candidate_trials': 3,
         'ssr_accept_only_improvement': True,
+        'ssr_commit_requires_gbest_improvement': True,
+        'ssr_inline_guidance': True,
+        'ssr_inline_prob': 0.20,
+        'ssr_inline_confidence_threshold': 0.70,
+        'ssr_inline_reduced_dim_ratio': 0.08,
+        'ssr_inline_reduced_blend': 0.25,
+        'ssr_inline_explore_dim_ratio': 0.05,
+        'ssr_inline_reinit_uses_knowledge': True,
         'ssr_random_fallback': False,
+        'ssr_balanced_reinit': True,
+        'ssr_explore_dim_ratio': 0.30,
+        'ssr_explore_opposition_ratio': 0.50,
+        'ssr_reduction_min_width': 0.05,
+        'ssr_reduction_width_scale': 2.0,
+        'ssr_reduced_gbest_pull': 0.40,
+        'ssr_uncertain_uniform_ratio': 0.25,
+        'ssr_force_mode_quota': False,
+        'ssr_adaptive_mode': True,
+        'ssr_escape_after_failed_activations': 1,
+        'ssr_cooldown_checks': 1,
+        'ssr_skip_last_checks': 1,
+        'ssr_escape_reduction_width_multiplier': 1.8,
+        'ssr_escape_noise_multiplier': 1.7,
+        'ssr_escape_dim_ratio': 0.45,
+        'ssr_escape_gbest_pull': 0.15,
+        'ssr_escape_accept_margin_ratio': 0.02,
+        'ssr_force_escape_after_failed_exploit': True,
+        'ssr_exploit_max_unique_rank_ratio': 0.80,
+        'ssr_exploit_max_machine_family_ratio': 0.80,
+        'ssr_exploit_min_dup_ratio': 0.35,
+        'ssr_exploit_restart_ratio': 0.0,
+        'ssr_exploit_diversity_quota': 0,
+        'ssr_escape_diversity_quota': 2,
     }
 
     _, best_position, _, _, ssr_info = CAOA_SSR(
