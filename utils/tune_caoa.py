@@ -54,10 +54,10 @@ def fitness(x: np.ndarray) -> float:
 
 def suggest_params(trial: optuna.Trial) -> dict:
     return {
-        "alpha": trial.suggest_float("alpha", 0.10, 0.90),
-        "beta": trial.suggest_float("beta", 0.01, 0.25),
-        "gamma": trial.suggest_float("gamma", 1e-4, 0.10, log=True),
-        "delta": trial.suggest_float("delta", 0.05, 20.0, log=True),
+        "alpha": trial.suggest_float("alpha", 0.10, 0.90, step=0.01),
+        "beta": trial.suggest_float("beta", 0.01, 0.25, step=0.01),
+        "gamma": trial.suggest_float("gamma", 0.01, 0.10, step=0.01),
+        "delta": trial.suggest_float("delta", 0.05, 20.00, step=0.01),
     }
 
 
