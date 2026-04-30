@@ -14,7 +14,7 @@ from engine.tidal_checker import TidalChecker
 from utils.data_loader import load_real_jssp_data
 
 
-MAX_FES = 5000
+MAX_FES = 3000
 MAX_ITER = 5000
 N_TRIALS = 200
 N_REPEATS = 5
