@@ -112,6 +112,83 @@ def save_voyage_debug_report(debug_df, output_dir="data/result"):
     return debug_path, summary_path
 
 
+def _get_ssr_logs(ssr_info):
+    if not isinstance(ssr_info, dict):
+        return []
+    logs = ssr_info.get("logs")
+    if logs is None:
+        logs = ssr_info.get("diagnostics", [])
+    return logs if isinstance(logs, list) else []
+
+
+def _sum_log_key(logs, key):
+    total = 0
+    for item in logs:
+        try:
+            total += int(item.get(key, 0))
+        except Exception:
+            pass
+    return total
+
+
+def build_ssr_diagnostic_summary(ssr_info):
+    logs = _get_ssr_logs(ssr_info)
+    best_score_history = (
+        ssr_info.get("best_score_history", [])
+        if isinstance(ssr_info, dict)
+        else []
+    )
+    activation_reason_counts = {}
+    search_mode_counts = {}
+    for item in logs:
+        reason = item.get("ssr_activation_reason")
+        if reason:
+            activation_reason_counts[reason] = activation_reason_counts.get(reason, 0) + 1
+        mode = item.get("ssr_search_mode")
+        if mode:
+            search_mode_counts[mode] = search_mode_counts.get(mode, 0) + 1
+
+    return {
+        "log_count": int(len(logs)),
+        "ssr_checks": int(len(best_score_history)),
+        "ssr_active_count": int(
+            sum(
+                1
+                for item in logs
+                if bool(item.get("ssr_active", item.get("ssr_triggered", False)))
+            )
+        ),
+        "ssr_replacement_total": _sum_log_key(logs, "ssr_replacement_count"),
+        "ssr_candidate_attempt_total": _sum_log_key(logs, "ssr_candidate_attempt_count"),
+        "ssr_rejected_candidate_total": _sum_log_key(logs, "ssr_rejected_candidate_count"),
+        "knowledge_replacement_total": _sum_log_key(logs, "knowledge_replacement_count"),
+        "reduced_space_replacement_total": _sum_log_key(logs, "reduced_space_replacement_count"),
+        "diversity_replacement_total": _sum_log_key(logs, "diversity_replacement_count"),
+        "inline_reduced_dim_total": _sum_log_key(logs, "inline_reduced_dim_count"),
+        "inline_explore_dim_total": _sum_log_key(logs, "inline_explore_dim_count"),
+        "inline_knowledge_reinit_total": _sum_log_key(logs, "inline_knowledge_reinit_count"),
+        "activation_reason_counts": activation_reason_counts,
+        "search_mode_counts": search_mode_counts,
+    }
+
+
+def save_ssr_diagnostics(ssr_info, output_dir="data/result"):
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    logs_path = output_path / "caoassr_ssr_logs.json"
+    summary_path = output_path / "caoassr_ssr_summary.json"
+
+    logs = _get_ssr_logs(ssr_info)
+    logs_path.write_text(json.dumps(logs, indent=4), encoding="utf-8")
+    summary_path.write_text(
+        json.dumps(build_ssr_diagnostic_summary(ssr_info), indent=4),
+        encoding="utf-8",
+    )
+
+    return logs_path, summary_path
+
+
 def build_schedule_comparison(
     baseline_schedule_df,
     optimized_schedule_df,
@@ -251,7 +328,7 @@ def ensure_feasible(metrics, label: str) -> None:
     )
 
 def main():
-    np.random.seed(10)
+    np.random.seed(42)
     
     # Load Data & Init
     df_ops, df_machine_master, df_job_target = load_real_jssp_data("data/processed/")
@@ -281,7 +358,7 @@ def main():
     )
 
     caoa_params = {
-        'N': 20, 'max_iter': 100, 'lb': 0.0, 'ub': 1.0, 'dim': dim,
+        'N': 10, 'max_iter': 200, 'lb': 0.0, 'ub': 1.0, 'dim': dim,
         'alpha': 0.79, 'beta': 0.07,
         'gamma': 0.06, 'delta': 13.12,
         'initial_energy': 10
@@ -357,12 +434,13 @@ def main():
     )
 
     caoa_schedule_df, caoa_metrics = decoder.decode_from_continuous(best_position)
-    ensure_feasible(caoa_metrics, "CAOA")
+    ensure_feasible(caoa_metrics, "CAOASSR")
     timetable_path, metrics_path, position_path = save_optimized_results(
         caoa_schedule_df,
         caoa_metrics,
         best_position,
     )
+    ssr_logs_path, ssr_summary_path = save_ssr_diagnostics(ssr_info)
     voyage_debug_df = build_voyage_debug_report(
         caoa_schedule_df,
         df_job_target,
@@ -396,11 +474,22 @@ def main():
     print(f"- Timetable : {timetable_path}")
     print(f"- Metrics   : {metrics_path}")
     print(f"- Best pos  : {position_path}")
+    print(f"- SSR logs  : {ssr_logs_path}")
+    print(f"- SSR sum   : {ssr_summary_path}")
     print(f"- Debug CSV : {voyage_debug_path}")
     print(f"- Debug sum : {voyage_summary_path}")
     print(f"- Compare V : {voyage_comparison_path}")
     print(f"- Compare O : {operation_comparison_path}")
-    print(f"- SSR checks: {len(ssr_info['best_score_history'])}")
+    ssr_summary = build_ssr_diagnostic_summary(ssr_info)
+    print(f"- SSR checks: {ssr_summary['ssr_checks']}")
+    print(f"- SSR active: {ssr_summary['ssr_active_count']}")
+    print(f"- SSR replace: {ssr_summary['ssr_replacement_total']}")
+    print(
+        "- Inline R/D/K: "
+        f"{ssr_summary['inline_reduced_dim_total']}/"
+        f"{ssr_summary['inline_explore_dim_total']}/"
+        f"{ssr_summary['inline_knowledge_reinit_total']}"
+    )
 
 if __name__ == "__main__":
     main()

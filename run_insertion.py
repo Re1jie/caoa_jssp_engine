@@ -251,7 +251,7 @@ def ensure_feasible(metrics, label: str) -> None:
     )
 
 def main():
-    np.random.seed(10)
+    np.random.seed(42)
     
     # Load Data & Init
     df_ops, df_machine_master, df_job_target = load_real_jssp_data("data/processed/")
@@ -281,7 +281,7 @@ def main():
     )
 
     caoa_params = {
-        'N': 20, 'max_iter': 100, 'lb': 0.0, 'ub': 1.0, 'dim': dim,
+        'N': 10, 'max_iter': 200, 'lb': 0.0, 'ub': 1.0, 'dim': dim,
         'alpha': 0.79, 'beta': 0.07,
         'gamma': 0.06, 'delta': 13.12,
         'initial_energy': 10
