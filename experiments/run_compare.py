@@ -150,12 +150,8 @@ def main():
     )
     
     def objective_function(X):
-        # Menggunakan Total Tardiness + Penalti Kongesti (Weighted Objective)
-        # Sesuai diskusi sebelumnya untuk menghindari kapal antre 3 hari
         _, metrics = decoder.decode_from_continuous(X)
-        w_tardiness = 0.7
-        w_congestion = 0.3
-        return (w_tardiness * metrics['total_tardiness']) + (w_congestion * metrics['total_congestion'])
+        return metrics['weighted_avg_tardiness']
 
     dim = decoder.get_dimension()
     N = 100

@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 
-def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.8, beta=0.5, gamma=0.1, delta=1, initial_energy=100.0, max_FEs=None, initial_pos=None):
+def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.3, beta=0.1, gamma=0.1, delta=1e-3, initial_energy=10.0, max_FEs=None, initial_pos=None):
     # 1. Inisialisasi Populasi dan Energi (Persamaan 2 & 3)
     lb = np.full(dim, lb) if np.isscalar(lb) else np.array(lb, dtype=float)
     ub = np.full(dim, ub) if np.isscalar(ub) else np.array(ub, dtype=float)
@@ -31,6 +31,7 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.8, beta=0.5, gamma=0.1, delta=1
     start_total = time.perf_counter()
     for t in range(max_iter):
         iter_start = time.perf_counter()
+        solution_reset_count = 0
         depleted_count = 0
 
         if max_FEs is not None and fe_counter >= max_FEs:
@@ -65,6 +66,7 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.8, beta=0.5, gamma=0.1, delta=1
             # Waktu Serangan / Adaptasi jika solusi memburuk tajam (Persamaan 7 & 8)
             if abs(new_fit - old_fit) > delta and new_fit > old_fit:
                 if max_FEs is None or fe_counter < max_FEs:
+                    solution_reset_count += 1
                     new_pos = lb + (ub - lb) * np.random.rand(dim)
                     new_pos = np.clip(new_pos, lb, ub)
                     new_fit = fobj(new_pos)
@@ -101,14 +103,14 @@ def CAOA(N, max_iter, lb, ub, dim, fobj, alpha=0.8, beta=0.5, gamma=0.1, delta=1
         total_time = time.perf_counter() - start_total
         
         # Tampilkan stats per iterasi
-        if (t + 1) % 5 == 0 or t == 0:
+        if (t + 1) % 1 == 0 or t == 0:
             print(
                 f"Iterasi {t+1}/{max_iter} | "
-                f"Populasi: {N} | "
                 f"gBest: {gBestScore:.2f} | "
                 f"Rata-rata: {np.mean(fitness):.2f} | "
                 f"FEs: {fe_counter} | "
-                f"Energy depleted: {depleted_count} | "
+                f"EReinit: {depleted_count} | "
+                f"DReinit: {solution_reset_count} | "
                 f"Iter time: {iter_time:.4f}s | "
                 f"Total time: {total_time:.2f}s"
             )

@@ -1,0 +1,8 @@
+{
+    "log_count": 100,
+    "rdk_checks": 10,
+    "inline_reduced_dim_total": 8842,
+    "inline_explore_dim_total": 8075,
+    "inline_knowledge_reinit_total": 238,
+    "rdk_guidance_total": 17155
+}

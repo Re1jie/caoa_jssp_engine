@@ -95,7 +95,7 @@ def main():
     # ─── 2. Definisikan Fungsi Objektif (Sama untuk Kedua Algoritma) ─────────
     def objective_function(X):
         _, metrics = decoder.decode_from_continuous(X)
-        return (0.7 * metrics['total_tardiness']) + (0.3 * metrics['total_congestion'])
+        return metrics['weighted_avg_tardiness']
 
     # ─── 3. Parameter Eksperimen ─────────────────────────────────────────────
     N_pop     = 10        # Ukuran populasi (identik)

@@ -1,0 +1,10 @@
+{
+    "voyage_count": 128,
+    "late_voyage_count": 40,
+    "on_time_voyage_count": 88,
+    "total_due_window_hours": 45600.0,
+    "total_tardiness_hours": 7598.0,
+    "max_tardiness_hours": 1732.0,
+    "avg_tardiness_hours": 59.359375,
+    "max_earliness_hours": 359.0
+}
