@@ -7,7 +7,7 @@ from engine.decoder_insertion import ActiveScheduleDecoder
 from engine.fcfs import run_fcfs_baseline
 from engine.gwo import GWO
 from engine.tidal_checker import TidalChecker
-from run_insertion import (
+from run_insertion_caoa import (
     build_schedule_comparison,
     build_voyage_debug_report,
     ensure_feasible,
