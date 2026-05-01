@@ -1,3 +1,0 @@
-seed,algorithm,total_tardiness,max_tardiness,runtime_seconds,feasible,fe_count,ssr_checks,ssr_activated_count,ssr_replacement_total,inline_reduced_dim_total,inline_explore_dim_total,inline_knowledge_reinit_total,error
-1,CAOA,nan,nan,0.000594330998865189,False,,,,,,,,"TypeError(""CAOA() got an unexpected keyword argument 'verbose'"")"
-1,CAOASSR,3576.0,1229.0,113.16141267499916,True,,10,0,0,0,0,0,

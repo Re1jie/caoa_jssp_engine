@@ -54,13 +54,21 @@ def build_voyage_debug_report(schedule_df, df_job_target):
     ).reset_index(drop=True)
 
 
-def save_optimized_results(schedule_df, metrics, best_position, output_dir="data/result"):
+def save_optimized_results(
+    schedule_df,
+    metrics,
+    best_position,
+    convergence_curve,
+    output_dir="data/results/caoa",
+):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
     timetable_path = output_path / "caoa_optimized_timetable.csv"
     metrics_path = output_path / "caoa_optimized_metrics.json"
     position_path = output_path / "caoa_best_position.npy"
+    convergence_path = output_path / "caoa_convergence_curve.npy"
+    convergence_json_path = output_path / "caoa_convergence_curve.json"
 
     schedule_df.to_csv(timetable_path, index=False)
     metrics_path.write_text(
@@ -68,11 +76,22 @@ def save_optimized_results(schedule_df, metrics, best_position, output_dir="data
         encoding="utf-8",
     )
     np.save(position_path, best_position)
+    np.save(convergence_path, convergence_curve)
+    convergence_json_path.write_text(
+        json.dumps([float(value) for value in convergence_curve], indent=4),
+        encoding="utf-8",
+    )
 
-    return timetable_path, metrics_path, position_path
+    return (
+        timetable_path,
+        metrics_path,
+        position_path,
+        convergence_path,
+        convergence_json_path,
+    )
 
 
-def save_baseline_results(schedule_df, metrics, output_dir="data/result"):
+def save_baseline_results(schedule_df, metrics, output_dir="data/results/caoa"):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -88,7 +107,7 @@ def save_baseline_results(schedule_df, metrics, output_dir="data/result"):
     return timetable_path, metrics_path
 
 
-def save_voyage_debug_report(debug_df, output_dir="data/result"):
+def save_voyage_debug_report(debug_df, output_dir="data/results/caoa"):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -226,7 +245,7 @@ def build_schedule_comparison(
 def save_schedule_comparison(
     voyage_comparison_df,
     operation_comparison_df,
-    output_dir="data/result",
+    output_dir="data/results/caoa",
 ):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -251,7 +270,7 @@ def ensure_feasible(metrics, label: str) -> None:
     )
 
 def main():
-    np.random.seed(451)
+    np.random.seed(42)
     
     # Load Data & Init
     df_ops, df_machine_master, df_job_target = load_real_jssp_data("data/processed/")
@@ -287,17 +306,24 @@ def main():
         'initial_energy': 10
     }
 
-    _, best_position, _, _ = CAOA(
+    best_score, best_position, convergence_curve, _ = CAOA(
         **caoa_params,
         fobj=lambda X: objective_function(X, decoder)
     )
 
     caoa_schedule_df, caoa_metrics = decoder.decode_from_continuous(best_position)
     ensure_feasible(caoa_metrics, "CAOA")
-    timetable_path, metrics_path, position_path = save_optimized_results(
+    (
+        timetable_path,
+        metrics_path,
+        position_path,
+        convergence_path,
+        convergence_json_path,
+    ) = save_optimized_results(
         caoa_schedule_df,
         caoa_metrics,
         best_position,
+        convergence_curve,
     )
     voyage_debug_df = build_voyage_debug_report(
         caoa_schedule_df,
@@ -332,6 +358,8 @@ def main():
     print(f"- Timetable : {timetable_path}")
     print(f"- Metrics   : {metrics_path}")
     print(f"- Best pos  : {position_path}")
+    print(f"- Curve NPY : {convergence_path}")
+    print(f"- Curve JSON: {convergence_json_path}")
     print(f"- Debug CSV : {voyage_debug_path}")
     print(f"- Debug sum : {voyage_summary_path}")
     print(f"- Compare V : {voyage_comparison_path}")

@@ -22,7 +22,7 @@ def save_optimized_results(
     metrics,
     best_position,
     convergence_curve,
-    output_dir="data/result",
+    output_dir="data/results/gwo",
 ):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -51,7 +51,7 @@ def save_optimized_results(
     )
 
 
-def save_voyage_debug_report(debug_df, output_dir="data/result"):
+def save_voyage_debug_report(debug_df, output_dir="data/results/gwo"):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -78,7 +78,7 @@ def save_voyage_debug_report(debug_df, output_dir="data/result"):
 def save_schedule_comparison(
     voyage_comparison_df,
     operation_comparison_df,
-    output_dir="data/result",
+    output_dir="data/results/gwo",
 ):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -93,7 +93,7 @@ def save_schedule_comparison(
 
 
 def main():
-    np.random.seed(451)
+    np.random.seed(42)
 
     df_ops, df_machine_master, df_job_target = load_real_jssp_data("data/processed/")
     dim = len(df_ops)
@@ -110,6 +110,7 @@ def main():
     fcfs_timetable_path, fcfs_metrics_path = save_baseline_results(
         fcfs_schedule_df,
         fcfs_metrics,
+        output_dir="data/results/gwo",
     )
 
     decoder = ActiveScheduleDecoder(
