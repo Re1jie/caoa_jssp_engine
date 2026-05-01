@@ -1,5 +1,5 @@
 {
-    "total_tardiness": 7583.0,
+    "total_tardiness": 7594.0,
     "max_tardiness": 1732.0,
     "late_voyage_count": 39,
     "is_feasible": true,

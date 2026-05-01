@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 def GWO(objf, lb, ub, dim, pop_size=30, max_iter=100, max_FEs=None, initial_pos=None):
     # Inisialisasi posisi dan skor untuk Alpha, Beta, dan Delta
@@ -28,10 +29,12 @@ def GWO(objf, lb, ub, dim, pop_size=30, max_iter=100, max_FEs=None, initial_pos=
     fe_counter = 0
 
     # Loop Utama Iterasi
+    start_total = time.perf_counter()
     for l in range(max_iter):
         if max_FEs is not None and fe_counter >= max_FEs:
             break
-            
+        iter_start = time.perf_counter()
+
         # Evaluasi Fitness dan Pembaruan Pemimpin
         for i in range(pop_size):
             if max_FEs is not None and fe_counter >= max_FEs:
@@ -92,9 +95,18 @@ def GWO(objf, lb, ub, dim, pop_size=30, max_iter=100, max_FEs=None, initial_pos=
         # Simpan skor terbaik pada iterasi ini
         cg_curve.append(alpha_score)
 
+        iter_time = time.perf_counter() - iter_start
+        total_time = time.perf_counter() - start_total
+
         # Tampilkan stats per iterasi
-        if (l + 1) % 50 == 0 or l == 0:
-            print(f"Iterasi {l+1}/{max_iter} | gBestScore: {alpha_score:.2f} | FEs: {fe_counter}")
+        if (l + 1) % 1 == 0 or l == 0:
+            print(
+                f"Iterasi {l+1}/{max_iter} | "
+                f"gBestScore: {alpha_score:.2f} | "
+                f"FEs: {fe_counter} | "
+                f"Iter time: {iter_time:.2f}s | "
+                f"Total time: {total_time:.2f}s"
+            )
 
     # Memetakan output sesuai permintaan: gBestScore, gBest, cg_curve
     gBestScore = alpha_score
