@@ -1,32 +1,164 @@
-# Pipeline Review
+# CAOA JSSP Engine
 
-Dokumen ini merangkum pipeline runtime yang aktif saat ini, dari data hasil preprocessing sampai output optimisasi.
+Project ini menyelesaikan Job Shop Scheduling Problem untuk penjadwalan voyage. Setiap voyage punya beberapa operasi berurutan, tiap operasi harus masuk ke machine tertentu, dan schedule harus mematuhi:
 
-## Ringkasannya
+- urutan operasi dalam voyage,
+- waktu kedatangan awal,
+- sailing time antar operasi,
+- kapasitas berth per machine,
+- constraint pasang surut,
+- target selesai voyage.
 
-Pipeline berjalan seperti ini:
+Objective utama yang diminimasi adalah `total_tardiness`, yaitu total keterlambatan semua voyage terhadap due time masing-masing.
 
-1. Runner memuat data operasi slice, target due, dan kapasitas machine dari `data/processed/`.
-2. `TidalChecker` memuat constraint pasang surut per `machine_id`, termasuk mode `alur` dan `sandar`.
-3. Baseline FCFS dibangun sebagai pembanding awal.
-4. CAOA mengoptimasi vektor prioritas kontinu berdimensi `jumlah_operasi`.
-5. Decoder aktif mengubah vektor itu menjadi schedule aktual yang patuh precedence, kapasitas berth, sailing time, dan constraint tidal aktif.
-6. Schedule dihitung metriknya dengan objective aktif `total_tardiness`.
-7. Jika hasil final infeasible, runner menghentikan proses dengan hard failure.
-8. Jika feasible, timetable, metrics, best position, dan debug report voyage disimpan ke `data/result/`.
+## Cara Membaca Project Ini
 
-## Objective dan metrik aktif
+Alur berpikirnya sederhana:
 
-Objective runtime saat ini adalah `standard total tardiness`:
+1. Data operasi sudah disiapkan di `data/processed/`.
+2. Baseline FCFS dibuat dulu sebagai pembanding.
+3. Optimizer tidak langsung membuat schedule, tapi membuat vektor prioritas operasi.
+4. Decoder mengubah vektor prioritas itu menjadi schedule nyata.
+5. Schedule dicek feasibility-nya.
+6. Metrics, timetable, debug report, dan convergence curve disimpan sebagai artefak eksperimen.
 
-`total_tardiness = sum(max(0, C_j - d_j))`
+Bagian yang paling penting untuk dipahami adalah pemisahan antara optimizer dan decoder. Optimizer hanya mencari urutan prioritas yang bagus. Decoder yang memastikan prioritas itu menjadi schedule yang valid terhadap constraint dunia nyata.
 
-dengan:
+## Entry Point
 
-- `C_j`: completion time operasi terakhir per voyage
-- `d_j`: due absolut voyage = `first_arrival + T_j`
+Ada tiga runner utama. Semuanya memakai data, decoder, metrics, dan baseline FCFS yang sama. Bedanya hanya optimizer yang dipakai.
 
-Metrik utama yang dipakai di runtime:
+```bash
+python run_insertion_caoa.py
+python run_insertion_caoassr.py
+python run_insertion_gwo.py
+```
+
+Gunakan:
+
+- `run_insertion_caoa.py` untuk eksperimen CAOA standar.
+- `run_insertion_caoassr.py` untuk CAOA dengan SSR/RDK guidance.
+- `run_insertion_gwo.py` untuk pembanding Grey Wolf Optimizer.
+
+Visualisasi perbandingan konvergensi:
+
+```bash
+python utils/plot_convergence.py
+```
+
+Output plot disimpan ke:
+
+```text
+data/results/convergence_comparison.png
+```
+
+## Komponen Utama
+
+- `engine/decoder_insertion.py`: decoder aktif berbasis insertion/capacity-aware slot search.
+- `engine/fcfs.py`: baseline FCFS yang tetap menghormati precedence, sailing time, capacity, dan tidal constraint.
+- `engine/tidal_checker.py`: pengecekan constraint pasang surut per machine dan ship.
+- `engine/metrics.py`: perhitungan `total_tardiness`, `max_tardiness`, dan feasibility metrics.
+- `engine/caoa.py`: optimizer CAOA.
+- `engine/caoassr.py`: varian CAOA dengan SSR/RDK guidance dan diagnostic logging.
+- `engine/gwo.py`: optimizer Grey Wolf Optimizer sebagai pembanding.
+- `utils/data_loader.py`: loader data runtime dari `data/processed/`.
+
+Jika ingin memahami runtime dari awal, urutan baca yang paling enak:
+
+1. `run_insertion_caoassr.py`
+2. `utils/data_loader.py`
+3. `engine/decoder_insertion.py`
+4. `engine/tidal_checker.py`
+5. `engine/metrics.py`
+6. `engine/caoassr.py`
+
+## Input Data
+
+File runtime utama:
+
+```text
+data/processed/jssp_data_sliced.csv
+data/processed/job_target_time_sliced.csv
+data/processed/machine_master.csv
+data/processed/tidal_constraints.csv
+data/processed/tidal_feasible_windows.csv
+data/processed/tidal_hourly_lookup.csv
+```
+
+Kolom penting:
+
+- Operasi: `job_id`, `voyage`, `op_seq`, `machine_id`, `A_lj`, `p_lj`, `TSail_lj`, opsional `ship_name`.
+- Machine: `machine_id`, `num_berth`.
+- Target: `job_id`, `voyage`, `T_j`, opsional `w_j`, `ship_name`.
+
+`load_real_jssp_data(...)` memvalidasi bahwa pasangan `(job_id, voyage)` di data operasi dan target harus identik.
+
+Makna kolom yang sering muncul:
+
+- `A_lj`: waktu release atau arrival operasi.
+- `p_lj`: durasi proses operasi.
+- `TSail_lj`: sailing time setelah operasi selesai menuju operasi berikutnya.
+- `S_lj`: waktu mulai operasi di schedule hasil decoder.
+- `C_lj`: waktu selesai operasi di schedule hasil decoder.
+- `T_j`: due window voyage, dihitung relatif dari arrival pertama voyage.
+
+## Decoder dan Feasibility
+
+`ActiveScheduleDecoder` menerima vektor kontinu `X` berdimensi jumlah operasi. Setiap nilai `X[i]` menjadi prioritas untuk satu operasi di `L_ref`.
+
+Contoh mental model:
+
+```text
+X = [0.23, 0.91, 0.10, ...]
+```
+
+Nilai lebih kecil berarti operasi lebih diprioritaskan ketika operasi tersebut eligible. Tetapi operasi hanya boleh dipilih jika precedence voyage-nya sudah terpenuhi. Jadi optimizer bisa memberi prioritas kecil pada operasi ke-3, tetapi decoder tetap tidak akan menjadwalkannya sebelum operasi ke-1 dan ke-2 selesai.
+
+Aturan scheduling:
+
+- hanya operasi berikutnya dari setiap voyage yang eligible,
+- operasi pertama release pada `A_lj`,
+- operasi berikutnya release pada `C_lj(prev) + TSail_lj(prev)`,
+- kandidat dipilih berdasarkan prioritas terkecil,
+- start time dicari dari release time dan akhir interval yang sudah terjadwal pada machine,
+- kapasitas dicek dengan overlap counting terhadap `num_berth`,
+- tidal constraint diterapkan sebelum slot dianggap feasible.
+
+Decoder juga memisahkan delay menjadi:
+
+- `congestion_wait`: delay karena kapasitas machine,
+- `tidal_wait`: delay tambahan karena constraint pasang surut.
+
+Kalau decoder gagal menemukan operasi eligible atau tidal window yang valid, schedule dianggap infeasible. Runner lalu berhenti lewat `ensure_feasible(...)`, supaya hasil yang tersimpan bukan schedule yang diam-diam invalid.
+
+## Constraint Pasang Surut
+
+Constraint tidal bersifat hard constraint.
+
+Mode yang didukung:
+
+- `alur`: `start_h` harus berada di arrival window dan `end_h` harus berada di departure window.
+- `sandar`: interval proses `[start_h, end_h]` harus overlap dengan minimal satu raw feasible window.
+
+Machine tanpa tidal constraint selalu feasible. Untuk machine tidal, constraint hanya diterapkan pada `ship_name` yang terdaftar pada constraint machine tersebut.
+
+Perbedaan penting:
+
+- Mode `alur` cocok untuk constraint kapal masuk/keluar alur: awal operasi dan akhir operasi harus jatuh pada window yang benar.
+- Mode `sandar` cocok untuk constraint kapal saat berada di pelabuhan: interval operasi cukup overlap dengan window pasang surut yang feasible.
+
+## Objective dan Metrics
+
+Objective utama:
+
+```text
+total_tardiness = sum(max(0, C_j - d_j))
+d_j = first_arrival_j + T_j
+```
+
+Artinya, due time absolut tiap voyage dihitung dari arrival pertama voyage ditambah target window `T_j`. Jika voyage selesai sebelum due time, tardiness-nya nol. Jika selesai setelah due time, selisihnya masuk ke total tardiness.
+
+Metrics output:
 
 - `total_tardiness`
 - `max_tardiness`
@@ -35,210 +167,86 @@ Metrik utama yang dipakai di runtime:
 - `infeasible_reason`
 - `penalty_tardiness`
 
-Jika schedule infeasible, sistem memakai penalti `1e12` melalui `build_infeasible_metrics(...)`.
+Schedule infeasible diberi penalti `1e12` melalui `build_infeasible_metrics(...)`.
 
-## Input runtime
+`is_feasible = true` berarti schedule lolos semua constraint yang diketahui decoder dan baseline runtime. `infeasible_reason` akan terisi jika ada kegagalan, misalnya tidal window tidak ditemukan.
 
-Loader utama: [utils/data_loader.py](/home/re1jie/caoa_jssp_engine/utils/data_loader.py:1)
+## Output
 
-File yang dibaca saat run:
+Setiap runner menyimpan hasil ke direktori masing-masing:
 
-- `data/processed/jssp_data_sliced.csv`
-- `data/processed/job_target_time_sliced.csv`
-- `data/processed/machine_master.csv`
-- `data/processed/tidal_constraints.csv`
-- `data/processed/tidal_feasible_windows.csv`
-- `data/processed/tidal_hourly_lookup.csv`
+```text
+data/results/caoa/
+data/results/caoassr/
+data/results/gwo/
+```
 
-Struktur penting:
+File utama per algoritma:
 
-- `df_ops`: `job_id`, `voyage`, `op_seq`, `machine_id`, `A_lj`, `p_lj`, `TSail_lj`, opsional `ship_name`
-- `df_machine_master`: `machine_id`, `num_berth`
-- `df_job_target`: `job_id`, `voyage`, `T_j`, opsional `ship_name`
+- `<algorithm>_optimized_timetable.csv`
+- `<algorithm>_optimized_metrics.json`
+- `<algorithm>_best_position.npy`
+- `<algorithm>_convergence_curve.npy`
+- `<algorithm>_convergence_curve.json`
+- `<algorithm>_voyage_debug_report.csv`
+- `<algorithm>_voyage_debug_summary.json`
+- `fcfs_baseline_timetable.csv`
+- `fcfs_baseline_metrics.json`
+- `fcfs_vs_<algorithm>_voyage_comparison.csv`
+- `fcfs_vs_<algorithm>_operation_comparison.csv`
 
-Loader juga memvalidasi bahwa pasangan `(job_id, voyage)` di operasi dan target harus identik.
+Khusus CAOASSR:
 
-## Runner utama
+- `caoassr_rdk_logs.json`
+- `caoassr_rdk_summary.json`
 
-Entry point aktif: [run_insertion.py](/home/re1jie/caoa_jssp_engine/run_insertion.py:1)
+Cara membaca file output:
 
-Urutan kerjanya:
+- Timetable menjawab “operasi dijadwalkan kapan dan di machine mana?”
+- Metrics menjawab “seberapa baik hasilnya secara objective?”
+- Best position menyimpan vektor prioritas terbaik yang ditemukan optimizer.
+- Convergence curve menunjukkan perkembangan objective selama iterasi.
+- Voyage debug report menjelaskan keterlambatan per voyage.
+- FCFS comparison menunjukkan perubahan schedule dari baseline ke optimizer.
+- RDK logs khusus CAOASSR menjelaskan aktivitas guidance SSR/RDK selama run.
 
-1. Set seed `numpy`.
-2. Load `df_ops`, `df_machine_master`, `df_job_target`.
-3. Inisialisasi `TidalChecker()`.
-4. Jalankan baseline FCFS via `run_fcfs_baseline(...)`.
-5. Panggil `ensure_feasible(...)` untuk memaksa baseline feasible.
-6. Bangun `ActiveScheduleDecoder` dari `engine/decoder_insertion.py`.
-7. Jalankan `CAOA(...)` untuk mencari `best_position`.
-8. Decode `best_position` menjadi schedule final.
-9. Panggil `ensure_feasible(...)` lagi untuk hasil CAOA.
-10. Simpan hasil optimisasi dan debug report voyage.
+## CAOA, CAOASSR, dan GWO
 
-Catatan penting:
+Semua optimizer bekerja pada representasi yang sama: vektor prioritas kontinu sepanjang jumlah operasi.
 
-- Runner aktif memakai [engine/decoder_insertion.py](/home/re1jie/caoa_jssp_engine/engine/decoder_insertion.py:1), bukan `engine/decoder.py`.
-- `engine/decoder.py` masih ada, tetapi bukan decoder yang dipakai entry point utama saat ini.
+`CAOA` adalah optimizer utama. Ia mencari prioritas operasi yang meminimasi tardiness dengan update populasi berbasis parameter `alpha`, `beta`, `gamma`, `delta`, dan `initial_energy`.
 
-## Baseline FCFS
+`CAOASSR` adalah varian CAOA yang menambahkan guidance. Tujuannya membantu pencarian ketika populasi mulai stagnan atau ketika elite solution memberi sinyal urutan operasi yang berguna. Diagnostic-nya disimpan sebagai RDK logs dan summary.
 
-Implementasi: [engine/fcfs.py](/home/re1jie/caoa_jssp_engine/engine/fcfs.py:1)
+`GWO` dipakai sebagai pembanding. Karena memakai decoder dan objective yang sama, hasilnya bisa dibandingkan lebih adil dengan CAOA dan CAOASSR.
 
-Karakter baseline:
+## Debugging Cepat
 
-- event-driven
-- urutan antrean per machine bersifat FCFS
-- tetap menghormati precedence antar operasi voyage
-- next operation dirilis pada `completion_prev + TSail_lj`
-- kapasitas machine mengikuti `num_berth`
-- tidal constraint dicek sebelum start operasi
+Jika hasil terasa aneh, cek berurutan:
 
-Jika berth tersedia, operasi langsung dicoba dijadwalkan. Jika tidal aktif, start digeser ke feasible window berikutnya. Jika tidak ada window feasible, baseline langsung mengembalikan metrics infeasible.
+1. `data/results/<algorithm>/<algorithm>_optimized_metrics.json`
+2. `data/results/<algorithm>/<algorithm>_voyage_debug_report.csv`
+3. `data/results/<algorithm>/fcfs_vs_<algorithm>_voyage_comparison.csv`
+4. `data/results/<algorithm>/fcfs_vs_<algorithm>_operation_comparison.csv`
+5. `data/results/<algorithm>/<algorithm>_convergence_curve.json`
 
-Interpretasi tidal yang dipakai baseline:
+Pertanyaan yang biasanya perlu dijawab:
 
-- `mode='alur'`: start operasi harus memenuhi arrival window dan completion harus memenuhi departure window.
-- `mode='sandar'`: interval proses `[S_lj, C_lj]` harus overlap dengan minimal satu raw feasible window, artinya cukup ada satu jam/titik tidal yang memenuhi `E_min` selama kapal sandar.
+- Apakah `is_feasible` bernilai `true`?
+- Voyage mana yang paling terlambat?
+- Apakah optimizer benar-benar memperbaiki FCFS?
+- Apakah delay datang dari `congestion_wait` atau `tidal_wait`?
+- Apakah convergence curve membaik atau stagnan sejak awal?
 
-## Decoder aktif untuk CAOA
+## Hasil Saat Ini
 
-Implementasi aktif: [engine/decoder_insertion.py](/home/re1jie/caoa_jssp_engine/engine/decoder_insertion.py:1)
+Ringkasan artefak metrics yang tersedia di branch ini:
 
-Peran decoder:
+| Method | Total Tardiness | Max Tardiness | Late Voyages | Feasible |
+| --- | ---: | ---: | ---: | --- |
+| FCFS baseline | 7761.0 | 1732.0 | 40 | true |
+| CAOA | 7598.0 | 1732.0 | 40 | true |
+| CAOASSR | 7585.0 | 1732.0 | 39 | true |
+| GWO | 7593.0 | 1732.0 | 41 | true |
 
-- menerima vektor kontinu `X`
-- memetakan setiap elemen `X[i]` ke satu operasi pada `L_ref`
-- memilih operasi eligible dengan prioritas terkecil
-- mencari slot start paling awal yang feasible pada machine terkait
-
-Berbeda dari decoder event-driven lama, decoder ini bekerja dengan pendekatan insertion pada timeline machine:
-
-- hanya operasi berikutnya per voyage yang boleh eligible
-- release operasi pertama = `A_lj`
-- release operasi berikutnya = `C_lj(prev) + TSail_lj(prev)`
-- kandidat dipilih berdasarkan `(priority, arrival_h, job_id, voyage, op_seq)`
-- untuk machine tertentu, decoder mencari candidate start dari `release_h` dan setiap `end_h` interval yang sudah ada
-- kapasitas dicek dengan overlap counting terhadap timeline machine
-- tidal diterapkan saat mencari slot feasible akhir
-
-Interpretasi tidal pada decoder sama persis dengan baseline:
-
-- `mode='alur'` memakai arrival/departure windows
-- `mode='sandar'` memakai overlap interval sandar terhadap raw feasible window
-
-Waktu tunggu dipisah menjadi:
-
-- `congestion_wait`: delay karena kapasitas machine
-- `tidal_wait`: delay tambahan karena constraint pasang surut
-
-Jika tidak ada operasi eligible atau tidal window tidak ditemukan, decoder mengembalikan schedule parsial beserta metrics infeasible.
-
-## Tidal constraint
-
-Implementasi: [engine/tidal_checker.py](/home/re1jie/caoa_jssp_engine/engine/tidal_checker.py:1)
-
-`TidalChecker` memuat:
-
-- daftar machine yang terkena constraint tidal
-- ship list yang benar-benar terkena constraint per machine
-- mode constraint per machine: `alur` atau `sandar`
-- arrival/departure feasible windows untuk mode `alur`
-- raw feasible windows untuk mode `sandar`
-- hourly lookup untuk debugging
-
-Aturan runtime:
-
-- machine non-tidal selalu feasible
-- machine tidal hanya membatasi kapal yang `ship_name`-nya terdaftar pada constraint machine tersebut
-- untuk `mode='alur'`, sebuah operasi dianggap feasible bila:
-  - `start_h` berada di arrival window
-  - `end_h = start_h + duration` berada di departure window
-- untuk `mode='sandar'`, sebuah operasi dianggap feasible bila:
-  - interval `[start_h, end_h]` overlap dengan minimal satu raw feasible window
-  - ekuivalen dengan adanya minimal satu nilai `is_feasible = true` selama kapal sandar
-- `find_next_start(...)` mencari start feasible paling awal sesuai mode constraint machine tersebut
-
-Jika tidak ada start feasible, sistem menganggap operasi gagal secara hard failure, bukan soft penalty tambahan selain penalti infeasible global.
-
-## Optimizer CAOA
-
-Implementasi: [engine/caoa.py](/home/re1jie/caoa_jssp_engine/engine/caoa.py:1)
-
-CAOA mengoptimasi vektor prioritas kontinu dengan pola umum:
-
-- inisialisasi populasi dalam rentang `[lb, ub]`
-- evaluasi semua individu dengan objective decoder
-- pilih leader secara probabilistik berdasar fitness
-- update posisi kandidat
-- re-randomize jika solusi memburuk tajam
-- reset individu yang energinya habis
-- simpan `gBest`
-
-Pada runner aktif, parameter utamanya:
-
-- `N = 20`
-- `max_iter = 100`
-- `lb = 0.0`
-- `ub = 1.0`
-- `alpha = 0.9`
-- `beta = 0.1`
-- `gamma = 0.07`
-- `delta = 1.2`
-- `initial_energy = 150`
-
-Dimensi solusi selalu `len(df_ops)`.
-
-## Perhitungan metrics
-
-Implementasi: [engine/metrics.py](/home/re1jie/caoa_jssp_engine/engine/metrics.py:1)
-
-Metrics dihitung per voyage:
-
-1. group schedule berdasarkan `(job_id, voyage)`
-2. ambil `first_arrival = min(A_lj)`
-3. ambil `last_completion = max(C_lj)`
-4. hitung `due = first_arrival + T_j`
-5. hitung `tardiness = max(0, last_completion - due)`
-
-Validasi tambahan:
-
-- semua target harus muncul di schedule
-- schedule tidak boleh memiliki voyage ekstra tanpa target
-
-Pelanggaran terhadap dua kondisi itu melempar `ValueError`.
-
-## Artefak output
-
-Hasil akhir disimpan oleh `run_insertion.py` ke `data/result/`:
-
-- `caoa_optimized_timetable.csv`
-- `caoa_optimized_metrics.json`
-- `caoa_best_position.npy`
-- `caoa_voyage_debug_report.csv`
-- `caoa_voyage_debug_summary.json`
-
-Isi debug report voyage:
-
-- `first_arrival_hour`
-- `last_completion_hour`
-- `due_window_hours`
-- `due_hour_absolute`
-- `tardiness_hours`
-- `lateness_hours`
-- `earliness_hours`
-- `debug_status`
-
-## Catatan perubahan terhadap versi lama
-
-Perubahan penting yang sudah tercermin di codebase saat ini:
-
-- decoder aktif sudah pindah ke model insertion/capacity-aware slot search
-- objective runtime berfokus pada tardiness standar
-- infeasibility tidal ditangani sebagai hard failure
-- tidal sekarang mendukung dua mode hard constraint:
-  - `alur` untuk aturan arrival/departure window
-  - `sandar` untuk aturan overlap selama kapal diproses di pelabuhan
-- runner mewajibkan FCFS dan hasil CAOA sama-sama feasible sebelum output dianggap valid
-- debug report voyage dibangun langsung dari schedule final dan `T_j`
-
-Secara singkat, pipeline terbaru sekarang lebih ketat pada feasibility dan lebih eksplisit memisahkan delay akibat antrean machine vs delay akibat tidal.
+Pada artefak saat ini, CAOASSR menghasilkan `total_tardiness` terendah.
